@@ -29,11 +29,11 @@ app.get('/api/health', (req, res) => {
 
 // Serve static files (frontend) in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../public')));
+  app.use(express.static(path.join(__dirname, '..')));
   
   // Handle all other routes by serving index.html
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../index.html'));
   });
 }
 
