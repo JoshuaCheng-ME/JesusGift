@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定制礼物 - JesusGift.org</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAF7F2',
+                        warmBeige: '#F5EDE4',
+                        softBlue: '#A8C5D9',
+                        deepBlue: '#5B7A8C',
+                        earthBrown: '#8B7355',
+                        gentleGreen: '#B5C4A8',
+                        lightGray: '#E8E4DE',
+                    },
+                    fontFamily: {
+                        serif: ['Noto Serif SC', 'Noto Serif', 'serif'],
+                        sans: ['Noto Sans SC', 'Noto Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', 'Noto Sans', sans-serif;
+            background-color: #FAF7F2;
+        }
+        .font-serif {
+            font-family: 'Noto Serif SC', 'Noto Serif', serif;
+        }
+        .card-preview {
+            background: linear-gradient(135deg, #F5EDE4 0%, #A8C5D9 50%, #B5C4A8 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        .input-glow:focus {
+            box-shadow: 0 0 0 3px rgba(168, 197, 217, 0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #5B7A8C 0%, #8B7355 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(91, 122, 140, 0.3);
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <header class="bg-cream/80 backdrop-blur-sm sticky top-0 z-50 border-b border-lightGray/50">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                    <div class="w-9 h-9 rounded-full bg-softBlue/30 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-serif font-semibold text-deepBlue">JesusGift.org</h1>
+                    </div>
+                </a>
+                <div class="relative">
+                    <button onclick="toggleLangMenu()" class="flex items-center space-x-1 px-3 py-2 rounded-lg border border-lightGray hover:bg-white/50 transition-colors text-sm">
+                        <svg class="w-4 h-4 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                        </svg>
+                        <span id="currentLang">中文</span>
+                        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="langMenu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-lightGray/50 py-2 z-50">
+                        <button onclick="setLang('zh')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">中文</button>
+                        <button onclick="setLang('en')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">English</button>
+                        <button onclick="setLang('fr')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">Français</button>
+                        <button onclick="setLang('de')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">Deutsch</button>
+                        <button onclick="setLang('ru')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">Русский</button>
+                        <button onclick="setLang('ja')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">日本語</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="py-10 px-4">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-10 fade-in">
+                <h2 class="text-2xl md:text-3xl font-serif text-deepBlue mb-3" data-i18n="title">定制你的专属礼物</h2>
+                <p class="text-gray-500" data-i18n="subtitle">填写下方信息，预览并保存这份充满爱意的礼物</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                <div class="order-2 lg:order-1 fade-in" style="animation-delay: 0.1s">
+                    <div class="bg-white rounded-2xl p-6 shadow-lg border border-lightGray/50">
+                        <h3 class="text-sm text-gray-400 mb-4 font-medium" data-i18n="preview">预览</h3>
+                        
+                        <div id="giftCard" class="card-preview aspect-[4/3] rounded-xl flex flex-col items-center justify-center p-8 text-center relative">
+                            <div class="absolute top-6 right-6 opacity-20">
+                                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2L13.09 8.26L19 7L14.74 11.26L21 13L14.74 14.74L19 19L13.09 17.74L12 24L10.91 17.74L5 19L9.26 14.74L3 13L9.26 11.26L5 7L10.91 8.26L12 2Z"/>
+                                </svg>
+                            </div>
+                            
+                            <div class="w-20 h-20 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center mb-6 shadow-lg">
+                                <div id="giftIcon" class="text-white">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <h4 id="giftTitle" class="text-white font-serif text-xl mb-4 drop-shadow-lg">职场焦虑卡</h4>
+                            
+                            <div class="space-y-2 text-white/90 text-sm">
+                                <p><span data-i18n="fromLabel">From:</span> <span id="fromText">匿名</span></p>
+                                <p><span data-i18n="toLabel">To:</span> <span id="toText">亲爱的朋友</span></p>
+                            </div>
+                            
+                            <p id="blessingText" class="mt-6 text-white/80 text-sm italic leading-relaxed max-w-xs"></p>
+                            
+                            <div class="absolute bottom-4 left-0 right-0 text-center">
+                                <span class="text-white/50 text-xs">JesusGift.org</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 space-y-4">
+                        <button onclick="downloadCard()" class="w-full py-4 btn-primary text-white rounded-xl font-medium flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            <span data-i18n="btn.download">生成并保存礼物</span>
+                        </button>
+                        
+                        <button onclick="shareLink()" class="w-full py-4 bg-white border-2 border-deepBlue text-deepBlue rounded-xl font-medium hover:bg-deepBlue hover:text-white transition-all flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                            </svg>
+                            <span data-i18n="btn.share">复制分享链接</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="order-1 lg:order-2 fade-in" style="animation-delay: 0.2s">
+                    <div class="bg-white rounded-2xl p-8 shadow-sm border border-lightGray/50">
+                        <div class="mb-8">
+                            <label class="block text-sm font-medium text-gray-700 mb-3" data-i18n="label.gift">选择礼物类型</label>
+                            <select id="giftSelect" onchange="updateGiftInfo()" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow bg-white">
+                                <option value="anxiety" data-i18n="gift.anxiety">职场焦虑卡 - 在忙碌中找回平安</option>
+                                <option value="loneliness" data-i18n="gift.loneliness">深夜孤独卡 - 你并不孤单</option>
+                                <option value="gratitude" data-i18n="gift.gratitude">感恩祝福卡 - 凡事谢恩</option>
+                                <option value="healing" data-i18n="gift.healing">失恋疗愈卡 - 祂在伤口处</option>
+                                <option value="exam" data-i18n="gift.exam">考试加油卡 - 仰望中得力量</option>
+                                <option value="birthday" data-i18n="gift.birthday">生日祝福卡 - 生命的恩典</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-3" data-i18n="label.from">赠言者（From）</label>
+                            <input type="text" id="fromInput" oninput="updatePreview()" data-i18n-placeholder="placeholder.from" placeholder="请输入你的名字" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-3" data-i18n="label.to">收礼人（To）</label>
+                            <input type="text" id="toInput" oninput="updatePreview()" data-i18n-placeholder="placeholder.to" placeholder="请输入收礼人的名字" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow">
+                        </div>
+                        
+                        <div class="mb-8">
+                            <label class="block text-sm font-medium text-gray-700 mb-3" data-i18n="label.verse">选择经文祝福</label>
+                            <select id="blessingSelect" onchange="updatePreview()" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow bg-white">
+                                <option value="john14_1" data-i18n="verse.john14_1">约翰福音 14:1 - 你们心里不要忧愁</option>
+                                <option value="phil4_6" data-i18n="verse.phil4_6">腓立比书 4:6 - 应当一无挂虑</option>
+                                <option value="psalm23" data-i18n="verse.psalm23">诗篇 23篇 - 耶和华是我的牧者</option>
+                                <option value="psalm46_10" data-i18n="verse.psalm46_10">诗篇 46:10 - 你们要休息</option>
+                                <option value="matt11_28" data-i18n="verse.matt11_28">马太福音 11:28 - 到我这里来</option>
+                                <option value="isaiah41_10" data-i18n="verse.isaiah41_10">以赛亚书 41:10 - 不要惧怕</option>
+                                <option value="rom8_28" data-i18n="verse.rom8_28">罗马书 8:28 - 万事互相效力</option>
+                                <option value="custom" data-i18n="verse.custom">自定义祝福</option>
+                            </select>
+                        </div>
+                        
+                        <div id="customBlessingWrapper" class="mb-8 hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-3" data-i18n="label.custom">自定义祝福语</label>
+                            <textarea id="customBlessing" oninput="updatePreview()" data-i18n-placeholder="placeholder.custom" rows="3" placeholder="请输入自定义祝福语..." class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow resize-none"></textarea>
+                        </div>
+                        
+                        <div class="bg-warmBeige/50 rounded-xl p-6 border border-warmBeige">
+                            <div class="flex items-start space-x-3">
+                                <svg class="w-5 h-5 text-earthBrown mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div class="text-sm text-gray-600">
+                                    <p class="font-medium text-earthBrown mb-1" data-i18n="notice.title">Gift is Free</p>
+                                    <p data-i18n="notice.desc">You can download this gift for free. If you'd like to support our ministry, any donation is appreciated.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <a href="https://jesusgift.org" class="block w-full py-4 bg-earthBrown text-white rounded-xl font-medium text-center hover:bg-deepBlue transition-colors" data-i18n="btn.continue">
+                                Continue to Download &#8594;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-sm text-gray-400">
+        <p>&copy; 2024 JesusGift.org · <span data-i18n="footer.copy">免费使用，分享爱与希望</span></p>
+    </footer>
+
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <script>
+        const i18n = {
+            zh: {
+                title: '定制你的专属礼物',
+                subtitle: '填写下方信息，预览并保存这份充满爱意的礼物',
+                preview: '预览',
+                fromLabel: 'From:',
+                toLabel: 'To:',
+                'btn.download': '生成并保存礼物',
+                'btn.share': '复制分享链接',
+                'label.gift': '选择礼物类型',
+                'gift.anxiety': '职场焦虑卡 - 在忙碌中找回平安',
+                'gift.loneliness': '深夜孤独卡 - 你并不孤单',
+                'gift.gratitude': '感恩祝福卡 - 凡事谢恩',
+                'gift.healing': '失恋疗愈卡 - 祂在伤口处',
+                'gift.exam': '考试加油卡 - 仰望中得力量',
+                'gift.birthday': '生日祝福卡 - 生命的恩典',
+                'label.from': '赠言者（From）',
+                'label.to': '收礼人（To）',
+                'placeholder.from': '请输入你的名字',
+                'placeholder.to': '请输入收礼人的名字',
+                'label.verse': '选择经文祝福',
+                'verse.john14_1': '约翰福音 14:1 - 你们心里不要忧愁',
+                'verse.phil4_6': '腓立比书 4:6 - 应当一无挂虑',
+                'verse.psalm23': '诗篇 23篇 - 耶和华是我的牧者',
+                'verse.psalm46_10': '诗篇 46:10 - 你们要休息',
+                'verse.matt11_28': '马太福音 11:28 - 到我这里来',
+                'verse.isaiah41_10': '以赛亚书 41:10 - 不要惧怕',
+                'verse.rom8_28': '罗马书 8:28 - 万事互相效力',
+                'verse.custom': '自定义祝福',
+                'label.custom': '自定义祝福语',
+                'placeholder.custom': '请输入自定义祝福语...',
+                'notice.title': 'Gift is Free',
+                'notice.desc': '你可以免费下载这份礼物。如果你想支持我们的事工，任何捐赠都将不胜感激。',
+                'btn.continue': '继续下载 →',
+                'footer.copy': '免费使用，分享爱与希望。'
+            },
+            en: {
+                title: 'Customize Your Gift',
+                subtitle: 'Fill in the details below, preview and save this loving gift',
+                preview: 'Preview',
+                fromLabel: 'From:',
+                toLabel: 'To:',
+                'btn.download': 'Generate & Save Gift',
+                'btn.share': 'Copy Share Link',
+                'label.gift': 'Choose Gift Type',
+                'gift.anxiety': 'Work Anxiety Card - Find Peace in Busyness',
+                'gift.loneliness': 'Late Night Loneliness Card - You Are Not Alone',
+                'gift.gratitude': 'Gratitude Card - Give Thanks in All Things',
+                'gift.healing': 'Heartbreak Healing Card - He Is Near',
+                'gift.exam': 'Exam Encouragement Card - Find Strength',
+                'gift.birthday': 'Birthday Blessing Card - Grace of Life',
+                'label.from': 'From',
+                'label.to': 'To',
+                'placeholder.from': 'Enter your name',
+                'placeholder.to': 'Enter recipient\'s name',
+                'label.verse': 'Choose a Bible Verse',
+                'verse.john14_1': 'John 14:1 - Do not let your hearts be troubled',
+                'verse.phil4_6': 'Philippians 4:6 - Do not be anxious about anything',
+                'verse.psalm23': 'Psalm 23 - The Lord is my shepherd',
+                'verse.psalm46_10': 'Psalm 46:10 - Be still, and know that I am God',
+                'verse.matt11_28': 'Matthew 11:28 - Come to me, all you who are weary',
+                'verse.isaiah41_10': 'Isaiah 41:10 - Do not fear, for I am with you',
+                'verse.rom8_28': 'Romans 8:28 - All things work together for good',
+                'verse.custom': 'Custom Blessing',
+                'label.custom': 'Custom Blessing',
+                'placeholder.custom': 'Write your custom blessing...',
+                'notice.title': 'Gift is Free',
+                'notice.desc': 'You can download this gift for free. If you\'d like to support our ministry, any donation is appreciated.',
+                'btn.continue': 'Continue to Download →',
+                'footer.copy': 'Free to use, sharing love and hope.'
+            },
+            fr: {
+                title: 'Personnalisez Votre Cadeau',
+                subtitle: 'Remplissez les détails ci-dessous, prévisualisez et enregistrez ce cadeau plein d\'amour',
+                preview: 'Aperçu',
+                fromLabel: 'De :',
+                toLabel: 'À :',
+                'btn.download': 'Générer et sauvegarder',
+                'btn.share': 'Copier le lien de partage',
+                'label.gift': 'Choisir le type de cadeau',
+                'gift.anxiety': 'Carte Anxiété - Retrouver la paix',
+                'gift.loneliness': 'Carte Solitude - Vous n\'êtes pas seul',
+                'gift.gratitude': 'Carte Gratitude - Rendez grâce',
+                'gift.healing': 'Carte Guérison - Il est proche',
+                'gift.exam': 'Carte Examens - Trouver la force',
+                'gift.birthday': 'Carte Anniversaire - Grâce de la vie',
+                'label.from': 'De',
+                'label.to': 'À',
+                'placeholder.from': 'Entrez votre nom',
+                'placeholder.to': 'Entrez le nom du destinataire',
+                'label.verse': 'Choisir un verset biblique',
+                'verse.john14_1': 'Jean 14:1 - Que votre cœur ne se trouble pas',
+                'verse.phil4_6': 'Philippiens 4:6 - Ne vous inquiétez de rien',
+                'verse.psalm23': 'Psaume 23 - L\'Éternel est mon berger',
+                'verse.psalm46_10': 'Psaume 46:10 - Cessez, et sachez que je suis Dieu',
+                'verse.matt11_28': 'Matthieu 11:28 - Venez à moi, vous tous',
+                'verse.isaiah41_10': 'Ésaïe 41:10 - Ne crains pas, car je suis avec toi',
+                'verse.rom8_28': 'Romains 8:28 - Toutes choses concourent au bien',
+                'verse.custom': 'Bénédiction personnalisée',
+                'label.custom': 'Bénédiction personnalisée',
+                'placeholder.custom': 'Écrivez votre bénédiction...',
+                'notice.title': 'Cadeau gratuit',
+                'notice.desc': 'Vous pouvez télécharger ce cadeau gratuitement. Si vous souhaitez soutenir notre ministère, tout don est apprécié.',
+                'btn.continue': 'Continuer le téléchargement →',
+                'footer.copy': 'Libre d\'utilisation, partager l\'amour et l\'espoir.'
+            },
+            de: {
+                title: 'Gestalte Dein Geschenk',
+                subtitle: 'Fülle die Details unten aus, sieh dir die Vorschau an und speichere dieses liebevolle Geschenk',
+                preview: 'Vorschau',
+                fromLabel: 'Von:',
+                toLabel: 'An:',
+                'btn.download': 'Erstellen & Speichern',
+                'btn.share': 'Link kopieren',
+                'label.gift': 'Geschenktyp wählen',
+                'gift.anxiety': 'Arbeitsstress-Karte - Frieden finden',
+                'gift.loneliness': 'Einsamkeits-Karte - Du bist nicht allein',
+                'gift.gratitude': 'Dankbarkeits-Karte - Danke sagen',
+                'gift.healing': 'Heilungs-Karte - Er ist nahe',
+                'gift.exam': 'Prüfungs-Karte - Kraft finden',
+                'gift.birthday': 'Geburtstags-Karte - Gnade des Lebens',
+                'label.from': 'Von',
+                'label.to': 'An',
+                'placeholder.from': 'Deinen Namen eingeben',
+                'placeholder.to': 'Namen des Empfängers eingeben',
+                'label.verse': 'Bibelvers wählen',
+                'verse.john14_1': 'Johannes 14:1 - Euer Herz werde nicht verzagt',
+                'verse.phil4_6': 'Philipper 4:6 - Sorgt euch um nichts',
+                'verse.psalm23': 'Psalm 23 - Der Herr ist mein Hirte',
+                'verse.psalm46_10': 'Psalm 46:11 - Seid still und erkennt, dass ich Gott bin',
+                'verse.matt11_28': 'Matthäus 11:28 - Kommt her zu mir, alle',
+                'verse.isaiah41_10': 'Jesaja 41:10 - Fürchte dich nicht, denn ich bin mit dir',
+                'verse.rom8_28': 'Römer 8:28 - Alles wirkt zum Guten',
+                'verse.custom': 'Eigener Segen',
+                'label.custom': 'Eigener Segen',
+                'placeholder.custom': 'Schreibe deinen eigenen Segen...',
+                'notice.title': 'Geschenk ist kostenlos',
+                'notice.desc': 'Du kannst dieses Geschenk kostenlos herunterladen. Wenn du unser Dienstwerk unterstützen möchtest, ist jede Spende willkommen.',
+                'btn.continue': 'Weiter zum Download →',
+                'footer.copy': 'Frei nutzbar, Liebe und Hoffnung teilen.'
+            },
+            ru: {
+                title: 'Создайте Свой Подарок',
+                subtitle: 'Заполните данные ниже, просмотрите и сохраните этот дар, полный любви',
+                preview: 'Предпросмотр',
+                fromLabel: 'От:',
+                toLabel: 'Кому:',
+                'btn.download': 'Создать и сохранить',
+                'btn.share': 'Копировать ссылку',
+                'label.gift': 'Выберите тип подарка',
+                'gift.anxiety': 'Карта тревоги - Найдите покой',
+                'gift.loneliness': 'Карта одиночества - Вы не одни',
+                'gift.gratitude': 'Карта благодарности - Благодарите',
+                'gift.healing': 'Карта исцеления - Он близок',
+                'gift.exam': 'Карта экзаменов - Найдите силу',
+                'gift.birthday': 'Карта день рождения - Благодать жизни',
+                'label.from': 'От',
+                'label.to': 'Кому',
+                'placeholder.from': 'Введите ваше имя',
+                'placeholder.to': 'Введите имя получателя',
+                'label.verse': 'Выберите стих из Библии',
+                'verse.john14_1': 'Иоанна 14:1 - Да не смущается сердце ваше',
+                'verse.phil4_6': 'Флп. 4:6 - Не заботьтесь ни о чем',
+                'verse.psalm23': 'Псалом 22 - Господь пастырь мой',
+                'verse.psalm46_10': 'Псалом 45:11 - Остановитесь и познайте, что Я Бог',
+                'verse.matt11_28': 'Мф. 11:28 - Придите ко Мне, все трудящиеся',
+                'verse.isaiah41_10': 'Ис. 41:10 - Не бойся, ибо Я с тобою',
+                'verse.rom8_28': 'Рим. 8:28 - Все содействует ко благу',
+                'verse.custom': 'Свое благословение',
+                'label.custom': 'Свое благословение',
+                'placeholder.custom': 'Напишите свое благословение...',
+                'notice.title': 'Подарок бесплатный',
+                'notice.desc': 'Вы можете скачать этот подарок бесплатно. Если хотите поддержать наше служение, любое пожертвование приветствуется.',
+                'btn.continue': 'Продолжить загрузку →',
+                'footer.copy': 'Бесплатно, делиться любовью и надеждой.'
+            },
+            ja: {
+                title: 'あなただけのギフトをカスタマイズ',
+                subtitle: '下記に情報を入力して、愛に満ちたこのギフトをプレビューして保存しましょう',
+                preview: 'プレビュー',
+                fromLabel: '送り主:',
+                toLabel: '宛先:',
+                'btn.download': '生成して保存',
+                'btn.share': '共有リンクをコピー',
+                'label.gift': 'ギフトの種類を選択',
+                'gift.anxiety': '仕事の不安カード - 平安を見つける',
+                'gift.loneliness': '深夜の孤独カード - 一人ではない',
+                'gift.gratitude': '感謝カード - 感謝する',
+                'gift.healing': '失恋の癒しカード - 神はそばにいる',
+                'gift.exam': '試験応援カード - 力を得る',
+                'gift.birthday': '誕生日祝福カード - 命の恵み',
+                'label.from': '送り主',
+                'label.to': '宛先',
+                'placeholder.from': '名前を入力',
+                'placeholder.to': '相手の名前を入力',
+                'label.verse': '聖句を選択',
+                'verse.john14_1': 'ヨハネ 14:1 - 心を騒がせるな',
+                'verse.phil4_6': 'ピリピ 4:6 - 何も思い煩うな',
+                'verse.psalm23': '詩篇 23 - 主はわが牧者',
+                'verse.psalm46_10': '詩篇 46:10 - 静まれ、わたしが神であることを知れ',
+                'verse.matt11_28': 'マタイ 11:28 - 疲れて重荷を負う者よ',
+                'verse.isaiah41_10': 'イザヤ 41:10 - 恐れるな、わたしは共にいる',
+                'verse.rom8_28': 'ローマ 8:28 - 万事が益となるように働く',
+                'verse.custom': 'オリジナルの祝福',
+                'label.custom': 'オリジナルの祝福',
+                'placeholder.custom': 'オリジナルの祝福を書いてください...',
+                'notice.title': 'ギフトは無料です',
+                'notice.desc': 'このギフトは無料でダウンロードできます。私たちの奉仕をサポートしたい場合は、いかなる寄付も感謝いたします。',
+                'btn.continue': 'ダウンロードへ進む →',
+                'footer.copy': '無料でご利用いただけます。愛と希望を分かち合いましょう。'
+            }
+        };
+
+        const giftDataAll = {
+            zh: {
+                anxiety: { title: '职场焦虑卡', icon: 'globe', blessing: '"你们心里不要忧愁，你们信神，也当信我。" —— 约翰福音 14:1' },
+                loneliness: { title: '深夜孤独卡', icon: 'moon', blessing: '"应当一无挂虑，只要凡事借着祷告、祈求和感谢，将你们所要的告诉神。" —— 腓立比书 4:6' },
+                gratitude: { title: '感恩祝福卡', icon: 'sun', blessing: '"耶和华是我的牧者，我必不致缺乏。" —— 诗篇 23:1' },
+                healing: { title: '失恋疗愈卡', icon: 'heart', blessing: '"你们要休息，要知道我是神！" —— 诗篇 46:10' },
+                exam: { title: '考试加油卡', icon: 'badge', blessing: '"凡劳苦担重担的人，可以到我这里来，我就使你们得安息。" —— 马太福音 11:28' },
+                birthday: { title: '生日祝福卡', icon: 'cake', blessing: '"不要惧怕，因为我与你同在。" —— 以赛亚书 41:10' }
+            },
+            en: {
+                anxiety: { title: 'Work Anxiety Card', icon: 'globe', blessing: '"Do not let your hearts be troubled. You believe in God; believe also in me." — John 14:1' },
+                loneliness: { title: 'Late Night Loneliness Card', icon: 'moon', blessing: '"Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God." — Philippians 4:6' },
+                gratitude: { title: 'Gratitude Card', icon: 'sun', blessing: '"The Lord is my shepherd, I lack nothing." — Psalm 23:1' },
+                healing: { title: 'Heartbreak Healing Card', icon: 'heart', blessing: '"Be still, and know that I am God." — Psalm 46:10' },
+                exam: { title: 'Exam Encouragement Card', icon: 'badge', blessing: '"Come to me, all you who are weary and burdened, and I will give you rest." — Matthew 11:28' },
+                birthday: { title: 'Birthday Blessing Card', icon: 'cake', blessing: '"So do not fear, for I am with you." — Isaiah 41:10' }
+            },
+            fr: {
+                anxiety: { title: 'Carte Anxiété', icon: 'globe', blessing: '"Que votre cœur ne se trouble pas. Vous croyez en Dieu, croyez aussi en moi." — Jean 14:1' },
+                loneliness: { title: 'Carte Solitude', icon: 'moon', blessing: '"Ne vous inquiétez de rien; mais en toute chose faites connaître vos besoins à Dieu par des prières et des supplications, avec des actions de grâces." — Philippiens 4:6' },
+                gratitude: { title: 'Carte Gratitude', icon: 'sun', blessing: '"L\'Éternel est mon berger: je ne manquerai de rien." — Psaume 23:1' },
+                healing: { title: 'Carte Guérison', icon: 'heart', blessing: '"Cessez, et sachez que je suis Dieu." — Psaume 46:11' },
+                exam: { title: 'Carte Examens', icon: 'badge', blessing: '"Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos." — Matthieu 11:28' },
+                birthday: { title: 'Carte Anniversaire', icon: 'cake', blessing: '"Ne crains pas, car je suis avec toi." — Ésaïe 41:10' }
+            },
+            de: {
+                anxiety: { title: 'Arbeitsstress-Karte', icon: 'globe', blessing: '"Euer Herz werde nicht verzagt. Glaubt an Gott und glaubt an mich!" — Johannes 14:1' },
+                loneliness: { title: 'Einsamkeits-Karte', icon: 'moon', blessing: '"Sorgt euch um nichts, sondern bringt in jeder Lage mit Dank eure Bitten vor Gott." — Philipper 4:6' },
+                gratitude: { title: 'Dankbarkeits-Karte', icon: 'sun', blessing: '"Der Herr ist mein Hirte, mir wird nichts mangeln." — Psalm 23:1' },
+                healing: { title: 'Heilungs-Karte', icon: 'heart', blessing: '"Seid still und erkennt, dass ich Gott bin." — Psalm 46:11' },
+                exam: { title: 'Prüfungs-Karte', icon: 'badge', blessing: '"Kommt her zu mir, alle, die ihr mühselig und belastet seid; ich will euch erquicken." — Matthäus 11:28' },
+                birthday: { title: 'Geburtstags-Karte', icon: 'cake', blessing: '"Fürchte dich nicht, denn ich bin mit dir." — Jesaja 41:10' }
+            },
+            ru: {
+                anxiety: { title: 'Карта тревоги', icon: 'globe', blessing: '"Да не смущается сердце ваше; веруйте в Бога и в Меня веруйте." — Иоанна 14:1' },
+                loneliness: { title: 'Карта одиночества', icon: 'moon', blessing: '"Не заботьтесь ни о чем, но во всем молитвой и прошением со благодарением открывайте свои желания пред Богом." — Флп. 4:6' },
+                gratitude: { title: 'Карта благодарности', icon: 'sun', blessing: '"Господь пастырь мой; я ни в чем не буду нуждаться." — Псалом 22:1' },
+                healing: { title: 'Карта исцеления', icon: 'heart', blessing: '"Остановитесь и познайте, что Я Бог." — Псалом 45:11' },
+                exam: { title: 'Карта экзаменов', icon: 'badge', blessing: '"Придите ко Мне, все трудящиеся и обремененные, и Я успокою вас." — Мф. 11:28' },
+                birthday: { title: 'Карта день рождения', icon: 'cake', blessing: '"Не бойся, ибо Я с тобою." — Ис. 41:10' }
+            },
+            ja: {
+                anxiety: { title: '仕事の不安カード', icon: 'globe', blessing: '"心を騒がせるな。神を信じるのであるから、わたしをも信じよ。" — ヨハネ 14:1' },
+                loneliness: { title: '深夜の孤独カード', icon: 'moon', blessing: '"何事も思い煩わず、すべてのことに、感謝をもってささげる祈りと願いとによって、神に知らせなさい。" — ピリピ 4:6' },
+                gratitude: { title: '感謝カード', icon: 'sun', blessing: '"主はわが牧者。わたしは乏しいことがない。" — 詩篇 23:1' },
+                healing: { title: '失恋の癒しカード', icon: 'heart', blessing: '"静まれ、わたしが神であることを知れ。" — 詩篇 46:10' },
+                exam: { title: '試験応援カード', icon: 'badge', blessing: '"疲れて重荷を負う者よ、みなわたしのもとに来なさい。わたしがあなたがたを休ませてあげよう。" — マタイ 11:28' },
+                birthday: { title: '誕生日祝福カード', icon: 'cake', blessing: '"恐れるな。わたしは共にいる。" — イザヤ 41:10' }
+            }
+        };
+
+        const blessingVersesAll = {
+            zh: {
+                john14_1: '"你们心里不要忧愁，你们信神，也当信我。" —— 约翰福音 14:1',
+                phil4_6: '"应当一无挂虑，只要凡事借着祷告、祈求和感谢，将你们所要的告诉神。" —— 腓立比书 4:6',
+                psalm23: '"耶和华是我的牧者，我必不致缺乏。" —— 诗篇 23:1',
+                psalm46_10: '"你们要休息，要知道我是神！" —— 诗篇 46:10',
+                matt11_28: '"凡劳苦担重担的人，可以到我这里来，我就使你们得安息。" —— 马太福音 11:28',
+                isaiah41_10: '"不要惧怕，因为我与你同在。" —— 以赛亚书 41:10',
+                rom8_28: '"万事都互相效力，叫爱神的人得益处。" —— 罗马书 8:28',
+                custom: ''
+            },
+            en: {
+                john14_1: '"Do not let your hearts be troubled. You believe in God; believe also in me." — John 14:1',
+                phil4_6: '"Do not be anxious about anything, but in every situation present your requests to God." — Philippians 4:6',
+                psalm23: '"The Lord is my shepherd, I lack nothing." — Psalm 23:1',
+                psalm46_10: '"Be still, and know that I am God." — Psalm 46:10',
+                matt11_28: '"Come to me, all you who are weary and burdened, and I will give you rest." — Matthew 11:28',
+                isaiah41_10: '"So do not fear, for I am with you." — Isaiah 41:10',
+                rom8_28: '"And we know that in all things God works for the good of those who love him." — Romans 8:28',
+                custom: ''
+            },
+            fr: {
+                john14_1: '"Que votre cœur ne se trouble pas. Vous croyez en Dieu, croyez aussi en moi." — Jean 14:1',
+                phil4_6: '"Ne vous inquiétez de rien; mais en toute chose faites connaître vos besoins à Dieu par des prières et des supplications, avec des actions de grâces." — Philippiens 4:6',
+                psalm23: '"L\'Éternel est mon berger: je ne manquerai de rien." — Psaume 23:1',
+                psalm46_10: '"Cessez, et sachez que je suis Dieu." — Psaume 46:11',
+                matt11_28: '"Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos." — Matthieu 11:28',
+                isaiah41_10: '"Ne crains pas, car je suis avec toi." — Ésaïe 41:10',
+                rom8_28: '"Et nous savons que toutes les choses concourent au bien de ceux qui aiment Dieu." — Romains 8:28',
+                custom: ''
+            },
+            de: {
+                john14_1: '"Euer Herz werde nicht verzagt. Glaubt an Gott und glaubt an mich!" — Johannes 14:1',
+                phil4_6: '"Sorgt euch um nichts, sondern bringt in jeder Lage mit Dank eure Bitten vor Gott." — Philipper 4:6',
+                psalm23: '"Der Herr ist mein Hirte, mir wird nichts mangeln." — Psalm 23:1',
+                psalm46_10: '"Seid still und erkennt, dass ich Gott bin." — Psalm 46:11',
+                matt11_28: '"Kommt her zu mir, alle, die ihr mühselig und belastet seid; ich will euch erquicken." — Matthäus 11:28',
+                isaiah41_10: '"Fürchte dich nicht, denn ich bin mit dir." — Jesaja 41:10',
+                rom8_28: '"Und wir wissen, dass alles zum Guten wirkt, für die, die Gott lieben." — Römer 8:28',
+                custom: ''
+            },
+            ru: {
+                john14_1: '"Да не смущается сердце ваше; веруйте в Бога и в Меня веруйте." — Иоанна 14:1',
+                phil4_6: '"Не заботьтесь ни о чем, но во всем молитвой и прошением со благодарением открывайте свои желания пред Богом." — Флп. 4:6',
+                psalm23: '"Господь пастырь мой; я ни в чем не буду нуждаться." — Псалом 22:1',
+                psalm46_10: '"Остановитесь и познайте, что Я Бог." — Псалом 45:11',
+                matt11_28: '"Придите ко Мне, все трудящиеся и обремененные, и Я успокою вас." — Мф. 11:28',
+                isaiah41_10: '"Не бойся, ибо Я с тобою." — Ис. 41:10',
+                rom8_28: '"И мы знаем, что все работает к благу для любящих Бога." — Рим. 8:28',
+                custom: ''
+            },
+            ja: {
+                john14_1: '"心を騒がせるな。神を信じるのであるから、わたしをも信じよ。" — ヨハネ 14:1',
+                phil4_6: '"何事も思い煩わず、すべてのことに、感謝をもってささげる祈りと願いとによって、神に知らせなさい。" — ピリピ 4:6',
+                psalm23: '"主はわが牧者。わたしは乏しいことがない。" — 詩篇 23:1',
+                psalm46_10: '"静まれ、わたしが神であることを知れ。" — 詩篇 46:10',
+                matt11_28: '"疲れて重荷を負う者よ、みなわたしのもとに来なさい。わたしがあなたがたを休ませてあげよう。" — マタイ 11:28',
+                isaiah41_10: '"恐れるな。わたしは共にいる。" — イザヤ 41:10',
+                rom8_28: '"神を愛する者にとって、万事が益となるように働くのである。" — ローマ 8:28',
+                custom: ''
+            }
+        };
+
+        let currentLang = localStorage.getItem('jesusgift-lang') || 'zh';
+
+        function applyLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('jesusgift-lang', lang);
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+            
+            const labels = { zh: '中文', en: 'English', fr: 'Français', de: 'Deutsch', ru: 'Русский', ja: '日本語' };
+            document.getElementById('currentLang').textContent = labels[lang];
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang] && i18n[lang][key]) el.textContent = i18n[lang][key];
+            });
+            
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (i18n[lang] && i18n[lang][key]) el.placeholder = i18n[lang][key];
+            });
+            
+            updateGiftInfo();
+        }
+
+        function toggleLangMenu() {
+            document.getElementById('langMenu').classList.toggle('hidden');
+        }
+
+        function setLang(lang) {
+            applyLang(lang);
+            toggleLangMenu();
+        }
+
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('langMenu');
+            const btn = e.target.closest('button[onclick="toggleLangMenu()"]');
+            if (!btn && !menu.classList.contains('hidden')) menu.classList.add('hidden');
+        });
+
+        function updateGiftInfo() {
+            const giftKey = document.getElementById('giftSelect').value;
+            const giftData = giftDataAll[currentLang][giftKey];
+            
+            if (giftData) {
+                document.getElementById('giftTitle').textContent = giftData.title;
+                document.getElementById('blessingText').textContent = giftData.blessing;
+                
+                const icons = {
+                    heart: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>',
+                    moon: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>',
+                    sun: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>',
+                    badge: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 11l3-3m0 0l3 3m-3-3v12"/></svg>',
+                    cake: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>',
+                    globe: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+                };
+                
+                document.getElementById('giftIcon').innerHTML = icons[giftData.icon] || icons.heart;
+            }
+        }
+
+        function updatePreview() {
+            const from = document.getElementById('fromInput').value || '匿名';
+            const to = document.getElementById('toInput').value || '亲爱的朋友';
+            const blessingSelect = document.getElementById('blessingSelect').value;
+            
+            document.getElementById('fromText').textContent = from;
+            document.getElementById('toText').textContent = to;
+            
+            if (blessingSelect === 'custom') {
+                document.getElementById('customBlessingWrapper').classList.remove('hidden');
+                document.getElementById('blessingText').textContent = document.getElementById('customBlessing').value || '';
+            } else {
+                document.getElementById('customBlessingWrapper').classList.add('hidden');
+                const verses = blessingVersesAll[currentLang];
+                document.getElementById('blessingText').textContent = verses[blessingSelect] || '';
+            }
+        }
+
+        function downloadCard() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const giftCard = document.getElementById('giftCard');
+            
+            canvas.width = 800;
+            canvas.height = 600;
+            
+            const gradient = ctx.createLinearGradient(0, 0, 800, 600);
+            gradient.addColorStop(0, '#F5EDE4');
+            gradient.addColorStop(0.5, '#A8C5D9');
+            gradient.addColorStop(1, '#B5C4A8');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 800, 600);
+            
+            ctx.font = 'bold 48px "Noto Serif SC", serif';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.textAlign = 'center';
+            ctx.fillText(document.getElementById('giftTitle').textContent, 400, 250);
+            
+            ctx.font = '24px "Noto Sans SC", sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillText(`From: ${document.getElementById('fromText').textContent}`, 400, 320);
+            ctx.fillText(`To: ${document.getElementById('toText').textContent}`, 400, 360);
+            
+            ctx.font = 'italic 20px "Noto Serif SC", serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            const blessing = document.getElementById('blessingText').textContent;
+            const lines = wrapText(ctx, blessing, 600);
+            let y = 420;
+            lines.forEach(line => {
+                ctx.fillText(line, 400, y);
+                y += 35;
+            });
+            
+            ctx.font = '14px "Noto Sans SC", sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fillText('JesusGift.org', 400, 570);
+            
+            const link = document.createElement('a');
+            link.download = `Gift_${document.getElementById('giftTitle').textContent}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.split('');
+            const lines = [];
+            let currentLine = '';
+            
+            words.forEach(char => {
+                const testLine = currentLine + char;
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = char;
+                } else {
+                    currentLine = testLine;
+                }
+            });
+            
+            if (currentLine) lines.push(currentLine);
+            return lines;
+        }
+
+        function shareLink() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert(i18n[currentLang]['btn.share'] + ' - ' + i18n[currentLang]['footer.copy']);
+            });
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const giftParam = urlParams.get('gift');
+        if (giftParam) {
+            const select = document.getElementById('giftSelect');
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === giftParam) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLang(currentLang);
+            updateGiftInfo();
+            updatePreview();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - JesusGift.org</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <script>tailwind.config={theme:{extend:{colors:{cream:'#FAF7F2',warmBeige:'#F5EDE4',softBlue:'#A8C5D9',deepBlue:'#5B7A8C',earthBrown:'#8B7355',gentleGreen:'#B5C4A8',lightGray:'#E8E4DE'},fontFamily:{serif:['Noto Serif SC','serif'],sans:['Noto Sans SC','sans-serif']}}}}</script>
+    <style>body{font-family:'Noto Sans SC',sans-serif;background:#FAF7F2;}.font-serif{font-family:'Noto Serif SC',serif;}.input-glow:focus{box-shadow:0 0 0 3px rgba(168,197,217,0.3);}.fade-in{animation:fadeIn 0.6s ease-out;}@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}</style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="bg-cream/80 backdrop-blur-sm sticky top-0 z-50 border-b border-lightGray/50">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-full bg-softBlue/30 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    </div>
+                    <h1 class="text-lg font-serif font-semibold text-deepBlue">JesusGift.org</h1>
+                </a>
+            </div>
+        </div>
+    </header>
+    <main class="flex-1 flex items-center justify-center py-12 px-4">
+        <div class="w-full max-w-md fade-in">
+            <div class="bg-white rounded-2xl p-8 shadow-lg border border-lightGray/50">
+                <div class="flex mb-8">
+                    <button id="loginTab" onclick="showTab('login')" class="flex-1 py-3 text-center font-medium border-b-2 border-deepBlue text-deepBlue">登录</button>
+                    <button id="registerTab" onclick="showTab('register')" class="flex-1 py-3 text-center font-medium border-b-2 border-transparent text-gray-400">注册</button>
+                </div>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="space-y-6">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label><input type="email" id="loginEmail" required placeholder="请输入邮箱" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">密码</label><input type="password" id="loginPassword" required placeholder="请输入密码" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
+                        <button type="submit" class="w-full py-4 bg-deepBlue text-white rounded-xl font-medium">登录</button>
+                    </div>
+                </form>
+                <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+                    <div class="space-y-6">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label><input type="email" id="registerEmail" required placeholder="请输入邮箱" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">密码</label><input type="password" id="registerPassword" required minlength="6" placeholder="至少6个字符" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">姓名</label><input type="text" id="registerName" placeholder="可选" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
+                        <button type="submit" class="w-full py-4 bg-earthBrown text-white rounded-xl font-medium">注册</button>
+                    </div>
+                </form>
+                <div id="errorMsg" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm"></div>
+                <div id="successMsg" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-600 text-sm"></div>
+            </div>
+            <div class="mt-6 text-center"><a href="index.html" class="text-sm text-gray-500 hover:text-deepBlue">← 返回首页</a></div>
+        </div>
+    </main>
+    <footer class="py-6 text-center text-sm text-gray-400"><p>&copy; 2024 JesusGift.org</p></footer>
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        function showTab(tab) {
+            document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
+            document.getElementById('registerForm').classList.toggle('hidden', tab!=='register');
+            document.getElementById('loginTab').classList.toggle('border-deepBlue', tab==='login');
+            document.getElementById('loginTab').classList.toggle('text-deepBlue', tab==='login');
+            document.getElementById('registerTab').classList.toggle('border-deepBlue', tab==='register');
+            document.getElementById('registerTab').classList.toggle('text-deepBlue', tab==='register');
+        }
+        function showError(msg) { document.getElementById('errorMsg').textContent = msg; document.getElementById('errorMsg').classList.remove('hidden'); }
+        function showSuccess(msg) { document.getElementById('successMsg').textContent = msg; document.getElementById('successMsg').classList.remove('hidden'); }
+        function hideMessages() { document.getElementById('errorMsg').classList.add('hidden'); document.getElementById('successMsg').classList.add('hidden'); }
+        async function handleLogin(e) {
+            e.preventDefault(); hideMessages();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('jesusgift-token', data.data.token);
+                    localStorage.setItem('jesusgift-user', JSON.stringify(data.data.user));
+                    showSuccess('登录成功！正在跳转...');
+                    setTimeout(() => window.location.href = data.data.user.is_admin ? 'admin.html' : 'profile.html', 1000);
+                } else { showError(data.message || '登录失败'); }
+            } catch (err) { showError('登录失败'); }
+        }
+        async function handleRegister(e) {
+            e.preventDefault(); hideMessages();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const name = document.getElementById('registerName').value;
+            try {
+                const res = await fetch(`${API_BASE}/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, name }) });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('jesusgift-token', data.data.token);
+                    localStorage.setItem('jesusgift-user', JSON.stringify(data.data.user));
+                    showSuccess('注册成功！正在跳转...');
+                    setTimeout(() => window.location.href = 'profile.html', 1000);
+                } else { showError(data.message || '注册失败'); }
+            } catch (err) { showError('注册失败'); }
+        }
+        function checkAuth() { if (localStorage.getItem('jesusgift-token')) { const user = JSON.parse(localStorage.getItem('jesusgift-user') || '{}'); window.location.href = user.is_admin ? 'admin.html' : 'profile.html'; } }
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</body>
+</html>

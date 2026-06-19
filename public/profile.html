@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - JesusGift.org</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <script>tailwind.config={theme:{extend:{colors:{cream:'#FAF7F2',warmBeige:'#F5EDE4',softBlue:'#A8C5D9',deepBlue:'#5B7A8C',earthBrown:'#8B7355',gentleGreen:'#B5C4A8',lightGray:'#E8E4DE'},fontFamily:{serif:['Noto Serif SC','serif'],sans:['Noto Sans SC','sans-serif']}}}}</script>
+    <style>body{font-family:'Noto Sans SC',sans-serif;background:#FAF7F2;}.font-serif{font-family:'Noto Serif SC',serif;}.input-glow:focus{box-shadow:0 0 0 3px rgba(168,197,217,0.3);}.fade-in{animation:fadeIn 0.6s ease-out;}@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}</style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="bg-cream/80 backdrop-blur-sm sticky top-0 z-50 border-b border-lightGray/50">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-full bg-softBlue/30 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    </div>
+                    <h1 class="text-lg font-serif font-semibold text-deepBlue">JesusGift.org</h1>
+                </a>
+                <button onclick="logout()" class="px-4 py-2 text-sm text-gray-500 hover:text-deepBlue">退出</button>
+            </div>
+        </div>
+    </header>
+    <main class="flex-1 py-10 px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl p-8 shadow-lg border border-lightGray/50 mb-8 fade-in">
+                <div class="flex items-center space-x-6">
+                    <div class="w-20 h-20 rounded-full bg-softBlue/30 flex items-center justify-center">
+                        <svg class="w-10 h-10 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    </div>
+                    <div>
+                        <h2 id="userName" class="text-2xl font-serif text-deepBlue">用户</h2>
+                        <p id="userEmail" class="text-gray-500">email@example.com</p>
+                        <p class="text-sm text-gray-400 mt-1">注册时间: <span id="userCreatedAt">-</span></p>
+                    </div>
+                    <div class="ml-auto text-center">
+                        <div class="text-3xl font-serif text-deepBlue" id="shareCount">0</div>
+                        <p class="text-sm text-gray-400">礼物分享次数</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg border border-lightGray/50 mb-8 fade-in">
+                <div class="flex border-b border-lightGray/50">
+                    <button onclick="showSection('profile')" class="flex-1 py-4 text-center font-medium border-b-2 border-deepBlue text-deepBlue">个人信息</button>
+                    <button onclick="showSection('history')" class="flex-1 py-4 text-center font-medium border-b-2 border-transparent text-gray-400">分享记录</button>
+                    <button onclick="showSection('settings')" class="flex-1 py-4 text-center font-medium border-b-2 border-transparent text-gray-400">账户设置</button>
+                </div>
+                <div id="profileSection" class="p-8">
+                    <form onsubmit="updateProfile(event)">
+                        <div class="space-y-6">
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">姓名</label><input type="text" id="profileName" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label><input type="email" id="profileEmail" disabled class="w-full px-4 py-3 rounded-xl border border-lightGray bg-gray-50 text-gray-500"></div>
+                            <button type="submit" class="w-full py-4 bg-deepBlue text-white rounded-xl font-medium">保存修改</button>
+                        </div>
+                    </form>
+                    <div id="profileMsg" class="hidden mt-4 p-4 rounded-xl text-sm"></div>
+                </div>
+                <div id="historySection" class="p-8 hidden"><div id="shareHistory" class="space-y-4"></div><div id="noHistory" class="text-center py-12 text-gray-400">暂无分享记录</div></div>
+                <div id="settingsSection" class="p-8 hidden">
+                    <h3 class="text-lg font-medium text-gray-700 mb-6">修改密码</h3>
+                    <form onsubmit="changePassword(event)">
+                        <div class="space-y-6">
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">当前密码</label><input type="password" id="currentPassword" required class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">新密码</label><input type="password" id="newPassword" required minlength="6" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
+                            <button type="submit" class="w-full py-4 bg-earthBrown text-white rounded-xl font-medium">修改密码</button>
+                        </div>
+                    </form>
+                    <div id="passwordMsg" class="hidden mt-4 p-4 rounded-xl text-sm"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <a href="gift-share.html" class="bg-white rounded-2xl p-6 shadow-sm border border-lightGray/50 hover:shadow-lg flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full bg-gentleGreen/30 flex items-center justify-center"><svg class="w-6 h-6 text-earthBrown" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg></div>
+                    <div><h4 class="font-medium text-deepBlue">创建新礼物</h4><p class="text-sm text-gray-400">定制并分享一份祝福</p></div>
+                </a>
+                <a href="index.html" class="bg-white rounded-2xl p-6 shadow-sm border border-lightGray/50 hover:shadow-lg flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full bg-softBlue/30 flex items-center justify-center"><svg class="w-6 h-6 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></div>
+                    <div><h4 class="font-medium text-deepBlue">浏览礼物库</h4><p class="text-sm text-gray-400">查看所有可用的礼物</p></div>
+                </a>
+            </div>
+        </div>
+    </main>
+    <footer class="py-6 text-center text-sm text-gray-400"><p>&copy; 2024 JesusGift.org · 传递福音与爱</p></footer>
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        let token = localStorage.getItem('jesusgift-token');
+        function showSection(section) {
+            ['profile','history','settings'].forEach(s=>{document.getElementById(s+'Section').classList.add('hidden');});
+            document.getElementById(section+'Section').classList.remove('hidden');
+            if(section==='history') loadShareHistory();
+        }
+        async function loadProfile() {
+            if(!token){window.location.href='login.html';return;}
+            try{
+                const res=await fetch(`${API_BASE}/auth/profile`,{headers:{'Authorization':`Bearer ${token}`}});
+                const data=await res.json();
+                if(!data.success){localStorage.removeItem('jesusgift-token');window.location.href='login.html';return;}
+                document.getElementById('userName').textContent=data.data.name||'用户';
+                document.getElementById('userEmail').textContent=data.data.email;
+                document.getElementById('userCreatedAt').textContent=data.data.created_at?new Date(data.data.created_at).toLocaleDateString():'-';
+                document.getElementById('shareCount').textContent=data.data.share_count||0;
+                document.getElementById('profileName').value=data.data.name||'';
+                document.getElementById('profileEmail').value=data.data.email;
+            }catch(err){console.error(err);}
+        }
+        async function loadShareHistory() {
+            if(!token)return;
+            try{
+                const res=await fetch(`${API_BASE}/auth/shares`,{headers:{'Authorization':`Bearer ${token}`}});
+                const data=await res.json();
+                const container=document.getElementById('shareHistory');
+                const noHistory=document.getElementById('noHistory');
+                if(data.success&&data.data.length>0){
+                    noHistory.classList.add('hidden');
+                    container.innerHTML=data.data.map(s=>`<div class="bg-warmBeige/30 rounded-xl p-4 flex items-center justify-between"><div><p class="font-medium text-deepBlue">${s.title_zh||s.gift_key}</p><p class="text-sm text-gray-500">送给: ${s.to_name||'-'}</p></div><div class="text-right"><p class="text-xs text-gray-400">${new Date(s.created_at).toLocaleDateString()}</p></div></div>`).join('');
+                }else{noHistory.classList.remove('hidden');container.innerHTML='';}
+            }catch(err){console.error(err);}
+        }
+        async function updateProfile(e) {
+            e.preventDefault();
+            const name=document.getElementById('profileName').value;
+            try{
+                const res=await fetch(`${API_BASE}/auth/profile`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({name})});
+                const data=await res.json();
+                const msg=document.getElementById('profileMsg');
+                if(data.success){msg.className='mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-600 text-sm';msg.textContent='个人信息已更新';msg.classList.remove('hidden');}
+                else{msg.className='mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm';msg.textContent=data.message||'Error';msg.classList.remove('hidden');}
+            }catch(err){console.error(err);}
+        }
+        async function changePassword(e) {
+            e.preventDefault();
+            const currentPassword=document.getElementById('currentPassword').value;
+            const newPassword=document.getElementById('newPassword').value;
+            try{
+                const res=await fetch(`${API_BASE}/auth/password`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({currentPassword,newPassword})});
+                const data=await res.json();
+                const msg=document.getElementById('passwordMsg');
+                if(data.success){msg.className='mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-600 text-sm';msg.textContent='密码已修改';msg.classList.remove('hidden');}
+                else{msg.className='mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm';msg.textContent=data.message||'密码错误';msg.classList.remove('hidden');}
+            }catch(err){console.error(err);}
+        }
+        function logout(){localStorage.removeItem('jesusgift-token');localStorage.removeItem('jesusgift-user');window.location.href='index.html';}
+        document.addEventListener('DOMContentLoaded',loadProfile);
+    </script>
+</body>
+</html>
