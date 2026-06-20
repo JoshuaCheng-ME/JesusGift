@@ -168,8 +168,8 @@
                             <div class="w-16 h-16 bg-gradient-to-br from-softBlue/20 to-gentleGreen/20 rounded-xl flex items-center justify-center mb-4">
                                 <span class="text-3xl">${gift.icon === 'heart' ? '❤️' : gift.icon === 'moon' ? '🌙' : gift.icon === 'sun' ? '☀️' : gift.icon === 'badge' ? '🎖️' : gift.icon === 'cake' ? '🎂' : '💝'}</span>
                             </div>
-                            <h3 class="font-serif text-xl font-semibold text-gray-900 mb-2">${gift.title}</h3>
-                            <p class="text-gray-600 text-sm">${gift.description}</p>
+                            <h3 class="font-serif text-xl font-semibold text-gray-900 mb-2">${gift.title_zh || gift.title}</h3>
+                            <p class="text-gray-600 text-sm">${gift.description_zh || gift.description}</p>
                             <div class="mt-4 text-deepBlue text-sm font-medium flex items-center gap-1">
                                 送出祝福 →
                             </div>
@@ -189,8 +189,8 @@
                     const container = document.getElementById('blessings-container');
                     container.innerHTML = data.data.slice(0, 3).map(blessing => `
                         <div class="bg-white rounded-2xl p-6 shadow-sm">
-                            <p class="blessing-text text-xl text-gray-800 mb-4 italic">${blessing.text}</p>
-                            <p class="text-earthBrown font-serif text-sm text-right">${blessing.reference}</p>
+                            <p class="blessing-text text-xl text-gray-800 mb-4 italic">${blessing.text_zh || blessing.text}</p>
+                            <p class="text-earthBrown font-serif text-sm text-right">${blessing.reference_zh || blessing.reference}</p>
                         </div>
                     `).join('');
                 }
