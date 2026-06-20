@@ -5,98 +5,433 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登录 - JesusGift.org</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
-    <script>tailwind.config={theme:{extend:{colors:{cream:'#FAF7F2',warmBeige:'#F5EDE4',softBlue:'#A8C5D9',deepBlue:'#5B7A8C',earthBrown:'#8B7355',gentleGreen:'#B5C4A8',lightGray:'#E8E4DE'},fontFamily:{serif:['Noto Serif SC','serif'],sans:['Noto Sans SC','sans-serif']}}}}</script>
-    <style>body{font-family:'Noto Sans SC',sans-serif;background:#FAF7F2;}.font-serif{font-family:'Noto Serif SC',serif;}.input-glow:focus{box-shadow:0 0 0 3px rgba(168,197,217,0.3);}.fade-in{animation:fadeIn 0.6s ease-out;}@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}</style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAF7F2',
+                        warmBeige: '#F5EDE4',
+                        softBlue: '#A8C5D9',
+                        deepBlue: '#5B7A8C',
+                        earthBrown: '#8B7355',
+                        gentleGreen: '#B5C4A8',
+                        lightGray: '#E8E4DE',
+                    },
+                    fontFamily: {
+                        serif: ['Noto Serif SC', 'Noto Serif', 'serif'],
+                        sans: ['Noto Sans SC', 'Noto Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', 'Noto Sans', sans-serif;
+            background-color: #FAF7F2;
+        }
+        .font-serif { font-family: 'Noto Serif SC', 'Noto Serif', serif; }
+        .input-glow:focus { box-shadow: 0 0 0 3px rgba(168, 197, 217, 0.3); }
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col">
+    <!-- Header -->
     <header class="bg-cream/80 backdrop-blur-sm sticky top-0 z-50 border-b border-lightGray/50">
         <div class="max-w-6xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
-                <a href="index.html" class="flex items-center space-x-3">
+                <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
                     <div class="w-9 h-9 rounded-full bg-softBlue/30 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        <svg class="w-5 h-5 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
                     </div>
                     <h1 class="text-lg font-serif font-semibold text-deepBlue">JesusGift.org</h1>
                 </a>
+                <!-- Language Switcher -->
+                <div class="relative">
+                    <button onclick="toggleLangMenu()" class="flex items-center space-x-1 px-3 py-2 rounded-lg border border-lightGray hover:bg-white/50 transition-colors text-sm">
+                        <svg class="w-4 h-4 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                        </svg>
+                        <span id="currentLang">中文</span>
+                        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="langMenu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-lightGray/50 py-2 z-50">
+                        <button onclick="setLang('zh')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">中文</button>
+                        <button onclick="setLang('en')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">English</button>
+                        <button onclick="setLang('fr')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">Français</button>
+                        <button onclick="setLang('de')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">Deutsch</button>
+                        <button onclick="setLang('ru')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">Русский</button>
+                        <button onclick="setLang('ja')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30 transition-colors">日本語</button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
+
+    <!-- Main Content -->
     <main class="flex-1 flex items-center justify-center py-12 px-4">
         <div class="w-full max-w-md fade-in">
             <div class="bg-white rounded-2xl p-8 shadow-lg border border-lightGray/50">
+                <!-- Tabs -->
                 <div class="flex mb-8">
-                    <button id="loginTab" onclick="showTab('login')" class="flex-1 py-3 text-center font-medium border-b-2 border-deepBlue text-deepBlue">登录</button>
-                    <button id="registerTab" onclick="showTab('register')" class="flex-1 py-3 text-center font-medium border-b-2 border-transparent text-gray-400">注册</button>
+                    <button id="loginTab" onclick="showTab('login')" class="flex-1 py-3 text-center font-medium border-b-2 border-deepBlue text-deepBlue" data-i18n="tab.login">登录</button>
+                    <button id="registerTab" onclick="showTab('register')" class="flex-1 py-3 text-center font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition-colors" data-i18n="tab.register">注册</button>
                 </div>
+
+                <!-- Login Form -->
                 <form id="loginForm" onsubmit="handleLogin(event)">
                     <div class="space-y-6">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label><input type="email" id="loginEmail" required placeholder="请输入邮箱" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">密码</label><input type="password" id="loginPassword" required placeholder="请输入密码" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
-                        <button type="submit" class="w-full py-4 bg-deepBlue text-white rounded-xl font-medium">登录</button>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.email">邮箱</label>
+                            <input type="email" id="loginEmail" required data-i18n-placeholder="placeholder.email" placeholder="请输入邮箱" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.password">密码</label>
+                            <input type="password" id="loginPassword" required data-i18n-placeholder="placeholder.password" placeholder="请输入密码" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow">
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-deepBlue text-white rounded-xl font-medium hover:bg-deepBlue/90 transition-colors flex items-center justify-center space-x-2">
+                            <span data-i18n="btn.login">登录</span>
+                        </button>
                     </div>
                 </form>
+
+                <!-- Register Form -->
                 <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
                     <div class="space-y-6">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label><input type="email" id="registerEmail" required placeholder="请输入邮箱" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">密码</label><input type="password" id="registerPassword" required minlength="6" placeholder="至少6个字符" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">姓名</label><input type="text" id="registerName" placeholder="可选" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none input-glow"></div>
-                        <button type="submit" class="w-full py-4 bg-earthBrown text-white rounded-xl font-medium">注册</button>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.email">邮箱</label>
+                            <input type="email" id="registerEmail" required data-i18n-placeholder="placeholder.email" placeholder="请输入邮箱" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.password">密码</label>
+                            <input type="password" id="registerPassword" required minlength="6" data-i18n-placeholder="placeholder.passwordNew" placeholder="至少6个字符" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.name">姓名</label>
+                            <input type="text" id="registerName" data-i18n-placeholder="placeholder.name" placeholder="可选" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none transition-all input-glow">
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-earthBrown text-white rounded-xl font-medium hover:bg-earthBrown/90 transition-colors flex items-center justify-center space-x-2">
+                            <span data-i18n="btn.register">注册</span>
+                        </button>
                     </div>
                 </form>
+
+                <!-- Error Message -->
                 <div id="errorMsg" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm"></div>
+
+                <!-- Success Message -->
                 <div id="successMsg" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-600 text-sm"></div>
             </div>
-            <div class="mt-6 text-center"><a href="index.html" class="text-sm text-gray-500 hover:text-deepBlue">← 返回首页</a></div>
+
+            <!-- Back to Home -->
+            <div class="mt-6 text-center">
+                <a href="index.html" class="text-sm text-gray-500 hover:text-deepBlue transition-colors" data-i18n="link.backHome">← 返回首页</a>
+            </div>
         </div>
     </main>
-    <footer class="py-6 text-center text-sm text-gray-400"><p>&copy; 2024 JesusGift.org</p></footer>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-sm text-gray-400">
+        <p>&copy; 2024 JesusGift.org</p>
+    </footer>
+
     <script>
-        const API_BASE = window.location.origin + '/api';
-        function showTab(tab) {
-            document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
-            document.getElementById('registerForm').classList.toggle('hidden', tab!=='register');
-            document.getElementById('loginTab').classList.toggle('border-deepBlue', tab==='login');
-            document.getElementById('loginTab').classList.toggle('text-deepBlue', tab==='login');
-            document.getElementById('registerTab').classList.toggle('border-deepBlue', tab==='register');
-            document.getElementById('registerTab').classList.toggle('text-deepBlue', tab==='register');
+        // API Base URL (change for production)
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : '/api';
+
+        const i18n = {
+            zh: {
+                'tab.login': '登录',
+                'tab.register': '注册',
+                'label.email': '邮箱',
+                'label.password': '密码',
+                'label.name': '姓名',
+                'placeholder.email': '请输入邮箱',
+                'placeholder.password': '请输入密码',
+                'placeholder.passwordNew': '至少6个字符',
+                'placeholder.name': '可选',
+                'btn.login': '登录',
+                'btn.register': '注册',
+                'link.backHome': '← 返回首页',
+                'title.login': '登录 - JesusGift.org',
+                'title.register': '注册 - JesusGift.org',
+                'error.loginFailed': '登录失败，请检查邮箱和密码',
+                'error.registerFailed': '注册失败，该邮箱可能已被注册',
+                'success.login': '登录成功！正在跳转...',
+                'success.register': '注册成功！正在跳转...'
+            },
+            en: {
+                'tab.login': 'Login',
+                'tab.register': 'Register',
+                'label.email': 'Email',
+                'label.password': 'Password',
+                'label.name': 'Name',
+                'placeholder.email': 'Enter email',
+                'placeholder.password': 'Enter password',
+                'placeholder.passwordNew': 'At least 6 characters',
+                'placeholder.name': 'Optional',
+                'btn.login': 'Login',
+                'btn.register': 'Register',
+                'link.backHome': '← Back to Home',
+                'title.login': 'Login - JesusGift.org',
+                'title.register': 'Register - JesusGift.org',
+                'error.loginFailed': 'Login failed, please check your email and password',
+                'error.registerFailed': 'Registration failed, email may already be registered',
+                'success.login': 'Login successful! Redirecting...',
+                'success.register': 'Registration successful! Redirecting...'
+            },
+            fr: {
+                'tab.login': 'Connexion',
+                'tab.register': 'Inscription',
+                'label.email': 'Email',
+                'label.password': 'Mot de passe',
+                'label.name': 'Nom',
+                'placeholder.email': 'Entrez votre email',
+                'placeholder.password': 'Entrez le mot de passe',
+                'placeholder.passwordNew': 'Au moins 6 caractères',
+                'placeholder.name': 'Optionnel',
+                'btn.login': 'Connexion',
+                'btn.register': 'Inscription',
+                'link.backHome': '← Retour à l\'accueil',
+                'title.login': 'Connexion - JesusGift.org',
+                'title.register': 'Inscription - JesusGift.org',
+                'error.loginFailed': 'Connexion échouée, vérifiez votre email et mot de passe',
+                'error.registerFailed': 'Inscription échouée, email déjà utilisé',
+                'success.login': 'Connexion réussie! Redirection...',
+                'success.register': 'Inscription réussie! Redirection...'
+            },
+            de: {
+                'tab.login': 'Anmelden',
+                'tab.register': 'Registrieren',
+                'label.email': 'Email',
+                'label.password': 'Passwort',
+                'label.name': 'Name',
+                'placeholder.email': 'Email eingeben',
+                'placeholder.password': 'Passwort eingeben',
+                'placeholder.passwordNew': 'Mindestens 6 Zeichen',
+                'placeholder.name': 'Optional',
+                'btn.login': 'Anmelden',
+                'btn.register': 'Registrieren',
+                'link.backHome': '← Zurück zur Startseite',
+                'title.login': 'Anmelden - JesusGift.org',
+                'title.register': 'Registrieren - JesusGift.org',
+                'error.loginFailed': 'Anmeldung fehlgeschlagen, bitte überprüfen Sie Email und Passwort',
+                'error.registerFailed': 'Registrierung fehlgeschlagen, Email bereits registriert',
+                'success.login': 'Anmeldung erfolgreich! Weiterleitung...',
+                'success.register': 'Registrierung erfolgreich! Weiterleitung...'
+            },
+            ru: {
+                'tab.login': 'Войти',
+                'tab.register': 'Регистрация',
+                'label.email': 'Email',
+                'label.password': 'Пароль',
+                'label.name': 'Имя',
+                'placeholder.email': 'Введите email',
+                'placeholder.password': 'Введите пароль',
+                'placeholder.passwordNew': 'Минимум 6 символов',
+                'placeholder.name': 'Опционально',
+                'btn.login': 'Войти',
+                'btn.register': 'Регистрация',
+                'link.backHome': '← На главную',
+                'title.login': 'Войти - JesusGift.org',
+                'title.register': 'Регистрация - JesusGift.org',
+                'error.loginFailed': 'Ошибка входа, проверьте email и пароль',
+                'error.registerFailed': 'Ошибка регистрации, email уже зарегистрирован',
+                'success.login': 'Вход успешен! Перенаправление...',
+                'success.register': 'Регистрация успешна! Перенаправление...'
+            },
+            ja: {
+                'tab.login': 'ログイン',
+                'tab.register': '登録',
+                'label.email': 'メール',
+                'label.password': 'パスワード',
+                'label.name': '名前',
+                'placeholder.email': 'メールを入力',
+                'placeholder.password': 'パスワードを入力',
+                'placeholder.passwordNew': '6文字以上',
+                'placeholder.name': '任意',
+                'btn.login': 'ログイン',
+                'btn.register': '登録',
+                'link.backHome': '← ホームに戻る',
+                'title.login': 'ログイン - JesusGift.org',
+                'title.register': '登録 - JesusGift.org',
+                'error.loginFailed': 'ログイン失敗、メールとパスワードを確認してください',
+                'error.registerFailed': '登録失敗、メールが既に登録されています',
+                'success.login': 'ログイン成功！転送中...',
+                'success.register': '登録成功！転送中...'
+            }
+        };
+
+        let currentLang = localStorage.getItem('jesusgift-lang') || 'zh';
+
+        function applyLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('jesusgift-lang', lang);
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+
+            const labels = { zh: '中文', en: 'English', fr: 'Français', de: 'Deutsch', ru: 'Русский', ja: '日本語' };
+            document.getElementById('currentLang').textContent = labels[lang];
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang] && i18n[lang][key]) el.textContent = i18n[lang][key];
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (i18n[lang] && i18n[lang][key]) el.placeholder = i18n[lang][key];
+            });
+
+            document.title = i18n[lang]['title.login'];
         }
-        function showError(msg) { document.getElementById('errorMsg').textContent = msg; document.getElementById('errorMsg').classList.remove('hidden'); }
-        function showSuccess(msg) { document.getElementById('successMsg').textContent = msg; document.getElementById('successMsg').classList.remove('hidden'); }
-        function hideMessages() { document.getElementById('errorMsg').classList.add('hidden'); document.getElementById('successMsg').classList.add('hidden'); }
+
+        function toggleLangMenu() {
+            document.getElementById('langMenu').classList.toggle('hidden');
+        }
+
+        function setLang(lang) {
+            applyLang(lang);
+            toggleLangMenu();
+        }
+
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('langMenu');
+            const btn = e.target.closest('button[onclick="toggleLangMenu()"]');
+            if (!btn && !menu.classList.contains('hidden')) menu.classList.add('hidden');
+        });
+
+        function showTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                loginTab.classList.add('border-deepBlue', 'text-deepBlue');
+                loginTab.classList.remove('border-transparent', 'text-gray-400');
+                registerTab.classList.remove('border-deepBlue', 'text-deepBlue');
+                registerTab.classList.add('border-transparent', 'text-gray-400');
+                document.title = i18n[currentLang]['title.login'];
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                registerTab.classList.add('border-deepBlue', 'text-deepBlue');
+                registerTab.classList.remove('border-transparent', 'text-gray-400');
+                loginTab.classList.remove('border-deepBlue', 'text-deepBlue');
+                loginTab.classList.add('border-transparent', 'text-gray-400');
+                document.title = i18n[currentLang]['title.register'];
+            }
+
+            hideMessages();
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMsg').classList.add('hidden');
+            document.getElementById('successMsg').classList.add('hidden');
+        }
+
         async function handleLogin(e) {
-            e.preventDefault(); hideMessages();
+            e.preventDefault();
+            hideMessages();
+
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+
             try {
-                const res = await fetch(`${API_BASE}/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
                 const data = await res.json();
+
                 if (data.success) {
                     localStorage.setItem('jesusgift-token', data.data.token);
                     localStorage.setItem('jesusgift-user', JSON.stringify(data.data.user));
-                    showSuccess('登录成功！正在跳转...');
-                    setTimeout(() => window.location.href = data.data.user.is_admin ? 'admin.html' : 'profile.html', 1000);
-                } else { showError(data.message || '登录失败'); }
-            } catch (err) { showError('登录失败'); }
+                    showSuccess(i18n[currentLang]['success.login']);
+                    setTimeout(() => {
+                        window.location.href = data.data.user.is_admin ? 'admin.html' : 'profile.html';
+                    }, 1000);
+                } else {
+                    showError(data.message || i18n[currentLang]['error.loginFailed']);
+                }
+            } catch (err) {
+                showError(i18n[currentLang]['error.loginFailed']);
+            }
         }
+
         async function handleRegister(e) {
-            e.preventDefault(); hideMessages();
+            e.preventDefault();
+            hideMessages();
+
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             const name = document.getElementById('registerName').value;
+
             try {
-                const res = await fetch(`${API_BASE}/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, name }) });
+                const res = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, name, language: currentLang })
+                });
+
                 const data = await res.json();
+
                 if (data.success) {
                     localStorage.setItem('jesusgift-token', data.data.token);
                     localStorage.setItem('jesusgift-user', JSON.stringify(data.data.user));
-                    showSuccess('注册成功！正在跳转...');
-                    setTimeout(() => window.location.href = 'profile.html', 1000);
-                } else { showError(data.message || '注册失败'); }
-            } catch (err) { showError('注册失败'); }
+                    showSuccess(i18n[currentLang]['success.register']);
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 1000);
+                } else {
+                    showError(data.message || i18n[currentLang]['error.registerFailed']);
+                }
+            } catch (err) {
+                showError(i18n[currentLang]['error.registerFailed']);
+            }
         }
-        function checkAuth() { if (localStorage.getItem('jesusgift-token')) { const user = JSON.parse(localStorage.getItem('jesusgift-user') || '{}'); window.location.href = user.is_admin ? 'admin.html' : 'profile.html'; } }
-        document.addEventListener('DOMContentLoaded', checkAuth);
+
+        // Check if already logged in
+        function checkAuth() {
+            const token = localStorage.getItem('jesusgift-token');
+            if (token) {
+                const user = JSON.parse(localStorage.getItem('jesusgift-user') || '{}');
+                window.location.href = user.is_admin ? 'admin.html' : 'profile.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLang(currentLang);
+            checkAuth();
+        });
     </script>
 </body>
 </html>

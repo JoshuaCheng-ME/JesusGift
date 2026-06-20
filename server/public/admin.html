@@ -5,155 +5,832 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>后台管理 - JesusGift.org</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
-    <script>tailwind.config={theme:{extend:{colors:{cream:'#FAF7F2',warmBeige:'#F5EDE4',softBlue:'#A8C5D9',deepBlue:'#5B7A8C',earthBrown:'#8B7355',gentleGreen:'#B5C4A8',lightGray:'#E8E4DE'},fontFamily:{serif:['Noto Serif SC','serif'],sans:['Noto Sans SC','sans-serif']}}}}</script>
-    <style>body{font-family:'Noto Sans SC',sans-serif;background:#FAF7F2;}.font-serif{font-family:'Noto Serif SC',serif;}.fade-in{animation:fadeIn 0.4s ease-out;}@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}</style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAF7F2',
+                        warmBeige: '#F5EDE4',
+                        softBlue: '#A8C5D9',
+                        deepBlue: '#5B7A8C',
+                        earthBrown: '#8B7355',
+                        gentleGreen: '#B5C4A8',
+                        lightGray: '#E8E4DE',
+                    },
+                    fontFamily: {
+                        serif: ['Noto Serif SC', 'Noto Serif', 'serif'],
+                        sans: ['Noto Sans SC', 'Noto Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans SC', 'Noto Sans', sans-serif; background-color: #FAF7F2; }
+        .font-serif { font-family: 'Noto Serif SC', 'Noto Serif', serif; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col">
+    <!-- Header -->
     <header class="bg-cream/80 backdrop-blur-sm sticky top-0 z-50 border-b border-lightGray/50">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                    <a href="index.html" class="flex items-center space-x-3">
+                    <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
                         <div class="w-9 h-9 rounded-full bg-softBlue/30 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                            <svg class="w-5 h-5 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
                         </div>
                         <h1 class="text-lg font-serif font-semibold text-deepBlue">JesusGift.org</h1>
                     </a>
-                    <span class="px-3 py-1 bg-deepBlue/10 text-deepBlue text-sm rounded-full">管理员</span>
+                    <span class="px-3 py-1 bg-deepBlue/10 text-deepBlue text-sm rounded-full" data-i18n="badge.admin">管理员</span>
                 </div>
-                <button onclick="logout()" class="px-4 py-2 text-sm text-gray-500 hover:text-deepBlue">退出</button>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleLangMenu()" class="flex items-center space-x-1 px-3 py-2 rounded-lg border border-lightGray hover:bg-white/50 transition-colors text-sm">
+                        <svg class="w-4 h-4 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                        </svg>
+                        <span id="currentLang">中文</span>
+                    </button>
+                    <button onclick="logout()" class="px-4 py-2 text-sm text-gray-500 hover:text-deepBlue transition-colors" data-i18n="btn.logout">退出</button>
+                </div>
             </div>
         </div>
+        <div id="langMenu" class="hidden absolute right-6 top-16 mt-2 w-40 bg-white rounded-xl shadow-lg border border-lightGray/50 py-2 z-50">
+            <button onclick="setLang('zh')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30">中文</button>
+            <button onclick="setLang('en')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30">English</button>
+            <button onclick="setLang('fr')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30">Français</button>
+            <button onclick="setLang('de')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30">Deutsch</button>
+            <button onclick="setLang('ru')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30">Русский</button>
+            <button onclick="setLang('ja')" class="w-full text-left px-4 py-2 text-sm hover:bg-warmBeige/30">日本語</button>
+        </div>
     </header>
+
+    <!-- Main Content -->
     <main class="flex-1 py-8 px-4">
         <div class="max-w-7xl mx-auto">
+            <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-lightGray/50"><div class="flex items-center justify-between"><div><p class="text-sm text-gray-400">总用户数</p><p id="statUsers" class="text-3xl font-serif text-deepBlue mt-2">0</p></div><div class="w-12 h-12 rounded-full bg-softBlue/30 flex items-center justify-center"><svg class="w-6 h-6 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 110 5M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"/></svg></div></div></div>
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-lightGray/50"><div class="flex items-center justify-between"><div><p class="text-sm text-gray-400">礼物总数</p><p id="statGifts" class="text-3xl font-serif text-deepBlue mt-2">0</p></div><div class="w-12 h-12 rounded-full bg-gentleGreen/30 flex items-center justify-center"><svg class="w-6 h-6 text-earthBrown" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg></div></div></div>
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-lightGray/50"><div class="flex items-center justify-between"><div><p class="text-sm text-gray-400">分享总数</p><p id="statShares" class="text-3xl font-serif text-deepBlue mt-2">0</p></div><div class="w-12 h-12 rounded-full bg-earthBrown/20 flex items-center justify-center"><svg class="w-6 h-6 text-earthBrown" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg></div></div></div>
-            </div>
-            <div class="bg-white rounded-2xl shadow-lg border border-lightGray/50 fade-in">
-                <div class="flex border-b border-lightGray/50">
-                    <button onclick="showTab('users')" class="flex-1 py-4 text-center font-medium border-b-2 border-deepBlue text-deepBlue">用户管理</button>
-                    <button onclick="showTab('gifts')" class="flex-1 py-4 text-center font-medium border-b-2 border-transparent text-gray-400">礼物管理</button>
-                    <button onclick="showTab('recent')" class="flex-1 py-4 text-center font-medium border-b-2 border-transparent text-gray-400">最近分享</button>
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-lightGray/50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400" data-i18n="stat.totalUsers">总用户数</p>
+                            <p id="statUsers" class="text-3xl font-serif text-deepBlue mt-2">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-softBlue/30 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-deepBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 110 5M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"/>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
-                <div id="usersSection" class="p-6"><div class="mb-6 flex space-x-4"><input type="text" id="userSearch" placeholder="搜索邮箱或姓名..." class="flex-1 px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none" onkeyup="if(event.key==='Enter')loadUsers()"><button onclick="loadUsers()" class="px-6 py-3 bg-deepBlue text-white rounded-xl">搜索</button></div><div class="overflow-x-auto"><table class="w-full"><thead><tr class="text-left text-sm text-gray-400 border-b border-lightGray/50"><th class="pb-4">ID</th><th class="pb-4">邮箱</th><th class="pb-4">姓名</th><th class="pb-4">分享数</th><th class="pb-4">注册时间</th><th class="pb-4">操作</th></tr></thead><tbody id="usersTable"></tbody></table></div><div id="usersPagination" class="mt-6 flex justify-center space-x-2"></div></div>
-                <div id="giftsSection" class="p-6 hidden"><div class="mb-6"><button onclick="showGiftModal()" class="px-6 py-3 bg-earthBrown text-white rounded-xl">添加礼物</button></div><div class="overflow-x-auto"><table class="w-full"><thead><tr class="text-left text-sm text-gray-400 border-b border-lightGray/50"><th class="pb-4">ID</th><th class="pb-4">标识</th><th class="pb-4">中文标题</th><th class="pb-4">英文标题</th><th class="pb-4">状态</th><th class="pb-4">操作</th></tr></thead><tbody id="giftsTable"></tbody></table></div></div>
-                <div id="recentSection" class="p-6 hidden"><div id="recentShares" class="space-y-4"></div></div>
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-lightGray/50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400" data-i18n="stat.totalGifts">礼物总数</p>
+                            <p id="statGifts" class="text-3xl font-serif text-deepBlue mt-2">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-gentleGreen/30 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-earthBrown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-lightGray/50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400" data-i18n="stat.totalShares">分享总数</p>
+                            <p id="statShares" class="text-3xl font-serif text-deepBlue mt-2">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-earthBrown/20 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-earthBrown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="bg-white rounded-2xl shadow-lg border border-lightGray/50 fade-in" style="animation-delay: 0.1s">
+                <div class="flex border-b border-lightGray/50">
+                    <button id="usersTabBtn" onclick="showTab('users')" class="flex-1 py-4 text-center font-medium border-b-2 border-deepBlue text-deepBlue" data-i18n="tab.users">用户管理</button>
+                    <button id="giftsTabBtn" onclick="showTab('gifts')" class="flex-1 py-4 text-center font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-600" data-i18n="tab.gifts">礼物管理</button>
+                    <button id="recentTabBtn" onclick="showTab('recent')" class="flex-1 py-4 text-center font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-600" data-i18n="tab.recent">最近分享</button>
+                </div>
+
+                <!-- Users Section -->
+                <div id="usersSection" class="p-6">
+                    <!-- Search -->
+                    <div class="mb-6 flex space-x-4">
+                        <input type="text" id="userSearch" placeholder="搜索邮箱或姓名..." class="flex-1 px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue focus:ring-2 focus:ring-softBlue/20 outline-none" onkeyup="if(event.key==='Enter')loadUsers()">
+                        <button onclick="loadUsers()" class="px-6 py-3 bg-deepBlue text-white rounded-xl hover:bg-deepBlue/90 transition-colors" data-i18n="btn.search">搜索</button>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="text-left text-sm text-gray-400 border-b border-lightGray/50">
+                                    <th class="pb-4" data-i18n="col.id">ID</th>
+                                    <th class="pb-4" data-i18n="col.email">邮箱</th>
+                                    <th class="pb-4" data-i18n="col.name">姓名</th>
+                                    <th class="pb-4" data-i18n="col.language">语言</th>
+                                    <th class="pb-4" data-i18n="col.shares">分享数</th>
+                                    <th class="pb-4" data-i18n="col.created">注册时间</th>
+                                    <th class="pb-4" data-i18n="col.actions">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTable"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="usersPagination" class="mt-6 flex justify-center space-x-2"></div>
+                </div>
+
+                <!-- Gifts Section -->
+                <div id="giftsSection" class="p-6 hidden">
+                    <!-- Add Gift Button -->
+                    <div class="mb-6">
+                        <button onclick="showGiftModal()" class="px-6 py-3 bg-earthBrown text-white rounded-xl hover:bg-earthBrown/90 transition-colors" data-i18n="btn.addGift">添加礼物</button>
+                    </div>
+
+                    <!-- Gifts Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="text-left text-sm text-gray-400 border-b border-lightGray/50">
+                                    <th class="pb-4" data-i18n="col.id">ID</th>
+                                    <th class="pb-4" data-i18n="col.key">标识</th>
+                                    <th class="pb-4" data-i18n="col.titleZh">中文标题</th>
+                                    <th class="pb-4" data-i18n="col.titleEn">英文标题</th>
+                                    <th class="pb-4" data-i18n="col.active">状态</th>
+                                    <th class="pb-4" data-i18n="col.actions">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="giftsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Shares Section -->
+                <div id="recentSection" class="p-6 hidden">
+                    <div id="recentShares" class="space-y-4"></div>
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- Gift Modal -->
     <div id="giftModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl p-8 w-full max-w-lg mx-4">
-            <h3 class="text-xl font-serif text-deepBlue mb-6">添加礼物</h3>
+            <h3 id="giftModalTitle" class="text-xl font-serif text-deepBlue mb-6" data-i18n="modal.addGift">添加礼物</h3>
             <form onsubmit="saveGift(event)">
                 <div class="space-y-4">
-                    <div><label class="block text-sm font-medium text-gray-700 mb-2">礼物标识</label><input type="text" id="giftKey" required class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none"></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-2">中文标题</label><input type="text" id="giftTitleZh" required class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none"></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-2">英文标题</label><input type="text" id="giftTitleEn" required class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none"></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-2">图标</label><select id="giftIcon" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none"><option value="heart">heart</option><option value="moon">moon</option><option value="sun">sun</option><option value="badge">badge</option><option value="cake">cake</option><option value="globe">globe</option></select></div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.giftKey">礼物标识</label>
+                        <input type="text" id="giftKey" required class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.titleZh">中文标题</label>
+                        <input type="text" id="giftTitleZh" required class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.titleEn">英文标题</label>
+                        <input type="text" id="giftTitleEn" required class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.icon">图标</label>
+                        <select id="giftIcon" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none bg-white">
+                            <option value="heart">heart</option>
+                            <option value="moon">moon</option>
+                            <option value="sun">sun</option>
+                            <option value="badge">badge</option>
+                            <option value="cake">cake</option>
+                            <option value="globe">globe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.sortOrder">排序</label>
+                        <input type="number" id="giftSortOrder" value="0" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none">
+                    </div>
                     <input type="hidden" id="giftId">
                 </div>
-                <div class="mt-6 flex space-x-4"><button type="submit" class="flex-1 py-4 bg-deepBlue text-white rounded-xl font-medium">保存</button><button type="button" onclick="closeGiftModal()" class="flex-1 py-4 bg-gray-100 text-gray-600 rounded-xl font-medium">取消</button></div>
+                <div class="mt-6 flex space-x-4">
+                    <button type="submit" class="flex-1 py-4 bg-deepBlue text-white rounded-xl font-medium hover:bg-deepBlue/90" data-i18n="btn.save">保存</button>
+                    <button type="button" onclick="closeGiftModal()" class="flex-1 py-4 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200" data-i18n="btn.cancel">取消</button>
+                </div>
             </form>
         </div>
     </div>
+
+    <!-- User Edit Modal -->
+    <div id="userModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 w-full max-w-lg mx-4">
+            <h3 class="text-xl font-serif text-deepBlue mb-6" data-i18n="modal.editUser">编辑用户</h3>
+            <form onsubmit="saveUser(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.name">姓名</label>
+                        <input type="text" id="editUserName" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.email">邮箱</label>
+                        <input type="email" id="editUserEmail" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.language">语言</label>
+                        <select id="editUserLanguage" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none bg-white">
+                            <option value="zh">中文</option>
+                            <option value="en">English</option>
+                            <option value="fr">Français</option>
+                            <option value="de">Deutsch</option>
+                            <option value="ru">Русский</option>
+                            <option value="ja">日本語</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="label.newPassword">新密码（可选）</label>
+                        <input type="password" id="editUserPassword" minlength="6" class="w-full px-4 py-3 rounded-xl border border-lightGray focus:border-softBlue outline-none">
+                    </div>
+                    <input type="hidden" id="editUserId">
+                </div>
+                <div class="mt-6 flex space-x-4">
+                    <button type="submit" class="flex-1 py-4 bg-deepBlue text-white rounded-xl font-medium hover:bg-deepBlue/90" data-i18n="btn.save">保存</button>
+                    <button type="button" onclick="closeUserModal()" class="flex-1 py-4 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200" data-i18n="btn.cancel">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        const API_BASE = window.location.origin + '/api';
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : '/api';
+
+        const i18n = {
+            zh: {
+                'badge.admin': '管理员',
+                'btn.logout': '退出',
+                'stat.totalUsers': '总用户数',
+                'stat.totalGifts': '礼物总数',
+                'stat.totalShares': '分享总数',
+                'tab.users': '用户管理',
+                'tab.gifts': '礼物管理',
+                'tab.recent': '最近分享',
+                'btn.search': '搜索',
+                'btn.addGift': '添加礼物',
+                'col.id': 'ID',
+                'col.email': '邮箱',
+                'col.name': '姓名',
+                'col.language': '语言',
+                'col.shares': '分享数',
+                'col.created': '注册时间',
+                'col.actions': '操作',
+                'col.key': '标识',
+                'col.titleZh': '中文标题',
+                'col.titleEn': '英文标题',
+                'col.active': '状态',
+                'btn.edit': '编辑',
+                'btn.delete': '删除',
+                'btn.deactivate': '禁用',
+                'btn.activate': '启用',
+                'modal.addGift': '添加礼物',
+                'modal.editGift': '编辑礼物',
+                'modal.editUser': '编辑用户',
+                'label.giftKey': '礼物标识',
+                'label.titleZh': '中文标题',
+                'label.titleEn': '英文标题',
+                'label.icon': '图标',
+                'label.sortOrder': '排序',
+                'label.name': '姓名',
+                'label.newPassword': '新密码（可选）',
+                'btn.save': '保存',
+                'btn.cancel': '取消',
+                'msg.confirmDelete': '确定要删除吗？',
+                'status.active': '启用',
+                'status.inactive': '禁用',
+                'text.noData': '暂无数据',
+                'text.method': '方式',
+                'text.to': '送给'
+            },
+            en: {
+                'badge.admin': 'Admin',
+                'btn.logout': 'Logout',
+                'stat.totalUsers': 'Total Users',
+                'stat.totalGifts': 'Total Gifts',
+                'stat.totalShares': 'Total Shares',
+                'tab.users': 'Users',
+                'tab.gifts': 'Gifts',
+                'tab.recent': 'Recent Shares',
+                'btn.search': 'Search',
+                'btn.addGift': 'Add Gift',
+                'col.id': 'ID',
+                'col.email': 'Email',
+                'col.name': 'Name',
+                'col.language': 'Language',
+                'col.shares': 'Shares',
+                'col.created': 'Created',
+                'col.actions': 'Actions',
+                'col.key': 'Key',
+                'col.titleZh': 'Chinese Title',
+                'col.titleEn': 'English Title',
+                'col.active': 'Status',
+                'btn.edit': 'Edit',
+                'btn.delete': 'Delete',
+                'btn.deactivate': 'Disable',
+                'btn.activate': 'Enable',
+                'modal.addGift': 'Add Gift',
+                'modal.editGift': 'Edit Gift',
+                'modal.editUser': 'Edit User',
+                'label.giftKey': 'Gift Key',
+                'label.titleZh': 'Chinese Title',
+                'label.titleEn': 'English Title',
+                'label.icon': 'Icon',
+                'label.sortOrder': 'Sort Order',
+                'label.name': 'Name',
+                'label.newPassword': 'New Password (optional)',
+                'btn.save': 'Save',
+                'btn.cancel': 'Cancel',
+                'msg.confirmDelete': 'Are you sure you want to delete?',
+                'status.active': 'Active',
+                'status.inactive': 'Inactive',
+                'text.noData': 'No data',
+                'text.method': 'Method',
+                'text.to': 'To'
+            },
+            fr: {
+                'badge.admin': 'Admin',
+                'btn.logout': 'Déconnexion',
+                'stat.totalUsers': 'Utilisateurs',
+                'stat.totalGifts': 'Cadeaux',
+                'stat.totalShares': 'Partages',
+                'tab.users': 'Utilisateurs',
+                'tab.gifts': 'Cadeaux',
+                'tab.recent': 'Partages récents',
+                'btn.search': 'Rechercher',
+                'btn.addGift': 'Ajouter',
+                'col.id': 'ID',
+                'col.email': 'Email',
+                'col.name': 'Nom',
+                'col.language': 'Langue',
+                'col.shares': 'Partages',
+                'col.created': 'Date',
+                'col.actions': 'Actions',
+                'col.key': 'Clé',
+                'col.titleZh': 'Titre chinois',
+                'col.titleEn': 'Titre anglais',
+                'col.active': 'Statut',
+                'btn.edit': 'Modifier',
+                'btn.delete': 'Supprimer',
+                'btn.deactivate': 'Désactiver',
+                'btn.activate': 'Activer',
+                'modal.addGift': 'Ajouter cadeau',
+                'modal.editGift': 'Modifier cadeau',
+                'modal.editUser': 'Modifier utilisateur',
+                'label.giftKey': 'Clé',
+                'label.titleZh': 'Titre chinois',
+                'label.titleEn': 'Titre anglais',
+                'label.icon': 'Icône',
+                'label.sortOrder': 'Ordre',
+                'label.name': 'Nom',
+                'label.newPassword': 'Nouveau mot de passe',
+                'btn.save': 'Enregistrer',
+                'btn.cancel': 'Annuler',
+                'msg.confirmDelete': 'Confirmer la suppression?',
+                'status.active': 'Actif',
+                'status.inactive': 'Inactif',
+                'text.noData': 'Pas de données',
+                'text.method': 'Méthode',
+                'text.to': 'À'
+            },
+            de: {
+                'badge.admin': 'Admin',
+                'btn.logout': 'Abmelden',
+                'stat.totalUsers': 'Benutzer',
+                'stat.totalGifts': 'Geschenke',
+                'stat.totalShares': 'Teilungen',
+                'tab.users': 'Benutzer',
+                'tab.gifts': 'Geschenke',
+                'tab.recent': 'Aktuelle Teilungen',
+                'btn.search': 'Suchen',
+                'btn.addGift': 'Hinzufügen',
+                'col.id': 'ID',
+                'col.email': 'Email',
+                'col.name': 'Name',
+                'col.language': 'Sprache',
+                'col.shares': 'Teilungen',
+                'col.created': 'Datum',
+                'col.actions': 'Aktionen',
+                'col.key': 'Schlüssel',
+                'col.titleZh': 'Chinesischer Titel',
+                'col.titleEn': 'Englischer Titel',
+                'col.active': 'Status',
+                'btn.edit': 'Bearbeiten',
+                'btn.delete': 'Löschen',
+                'btn.deactivate': 'Deaktivieren',
+                'btn.activate': 'Aktivieren',
+                'modal.addGift': 'Geschenk hinzufügen',
+                'modal.editGift': 'Geschenk bearbeiten',
+                'modal.editUser': 'Benutzer bearbeiten',
+                'label.giftKey': 'Schlüssel',
+                'label.titleZh': 'Chinesischer Titel',
+                'label.titleEn': 'Englischer Titel',
+                'label.icon': 'Icon',
+                'label.sortOrder': 'Reihenfolge',
+                'label.name': 'Name',
+                'label.newPassword': 'Neues Passwort',
+                'btn.save': 'Speichern',
+                'btn.cancel': 'Abbrechen',
+                'msg.confirmDelete': 'Löschen bestätigen?',
+                'status.active': 'Aktiv',
+                'status.inactive': 'Inaktiv',
+                'text.noData': 'Keine Daten',
+                'text.method': 'Methode',
+                'text.to': 'An'
+            },
+            ru: {
+                'badge.admin': 'Админ',
+                'btn.logout': 'Выход',
+                'stat.totalUsers': 'Пользователей',
+                'stat.totalGifts': 'Подарков',
+                'stat.totalShares': 'Подарков',
+                'tab.users': 'Пользователи',
+                'tab.gifts': 'Подарки',
+                'tab.recent': 'Недавние',
+                'btn.search': 'Поиск',
+                'btn.addGift': 'Добавить',
+                'col.id': 'ID',
+                'col.email': 'Email',
+                'col.name': 'Имя',
+                'col.language': 'Язык',
+                'col.shares': 'Подарков',
+                'col.created': 'Дата',
+                'col.actions': 'Действия',
+                'col.key': 'Ключ',
+                'col.titleZh': 'Китайский',
+                'col.titleEn': 'Английский',
+                'col.active': 'Статус',
+                'btn.edit': 'Изменить',
+                'btn.delete': 'Удалить',
+                'btn.deactivate': 'Отключить',
+                'btn.activate': 'Включить',
+                'modal.addGift': 'Добавить подарок',
+                'modal.editGift': 'Изменить подарок',
+                'modal.editUser': 'Изменить пользователя',
+                'label.giftKey': 'Ключ',
+                'label.titleZh': 'Китайский заголовок',
+                'label.titleEn': 'Английский заголовок',
+                'label.icon': 'Иконка',
+                'label.sortOrder': 'Порядок',
+                'label.name': 'Имя',
+                'label.newPassword': 'Новый пароль',
+                'btn.save': 'Сохранить',
+                'btn.cancel': 'Отмена',
+                'msg.confirmDelete': 'Подтвердить удаление?',
+                'status.active': 'Активен',
+                'status.inactive': 'Неактивен',
+                'text.noData': 'Нет данных',
+                'text.method': 'Метод',
+                'text.to': 'Кому'
+            },
+            ja: {
+                'badge.admin': '管理者',
+                'btn.logout': 'ログアウト',
+                'stat.totalUsers': 'ユーザー数',
+                'stat.totalGifts': 'ギフト数',
+                'stat.totalShares': '共有数',
+                'tab.users': 'ユーザー',
+                'tab.gifts': 'ギフト',
+                'tab.recent': '最近の共有',
+                'btn.search': '検索',
+                'btn.addGift': '追加',
+                'col.id': 'ID',
+                'col.email': 'メール',
+                'col.name': '名前',
+                'col.language': '言語',
+                'col.shares': '共有数',
+                'col.created': '登録日',
+                'col.actions': '操作',
+                'col.key': 'キー',
+                'col.titleZh': '中国語タイトル',
+                'col.titleEn': '英語タイトル',
+                'col.active': '状態',
+                'btn.edit': '編集',
+                'btn.delete': '削除',
+                'btn.deactivate': '無効',
+                'btn.activate': '有効',
+                'modal.addGift': 'ギフト追加',
+                'modal.editGift': 'ギフト編集',
+                'modal.editUser': 'ユーザー編集',
+                'label.giftKey': 'キー',
+                'label.titleZh': '中国語タイトル',
+                'label.titleEn': '英語タイトル',
+                'label.icon': 'アイコン',
+                'label.sortOrder': '順序',
+                'label.name': '名前',
+                'label.newPassword': '新しいパスワード',
+                'btn.save': '保存',
+                'btn.cancel': 'キャンセル',
+                'msg.confirmDelete': '削除しますか？',
+                'status.active': '有効',
+                'status.inactive': '無効',
+                'text.noData': 'データなし',
+                'text.method': '方法',
+                'text.to': '宛先'
+            }
+        };
+
+        let currentLang = localStorage.getItem('jesusgift-lang') || 'zh';
         let token = localStorage.getItem('jesusgift-token');
         let currentPage = 1;
+
+        function applyLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('jesusgift-lang', lang);
+            const labels = { zh: '中文', en: 'English', fr: 'Français', de: 'Deutsch', ru: 'Русский', ja: '日本語' };
+            document.getElementById('currentLang').textContent = labels[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang] && i18n[lang][key]) el.textContent = i18n[lang][key];
+            });
+        }
+
+        function toggleLangMenu() { document.getElementById('langMenu').classList.toggle('hidden'); }
+        function setLang(lang) { applyLang(lang); toggleLangMenu(); }
+        document.addEventListener('click', e => {
+            const menu = document.getElementById('langMenu');
+            if (!e.target.closest('#langMenu') && !e.target.closest('button[onclick="toggleLangMenu()"]') && !menu.classList.contains('hidden')) menu.classList.add('hidden');
+        });
+
         function showTab(tab) {
-            ['users','gifts','recent'].forEach(t=>{document.getElementById(t+'Section').classList.add('hidden');});
-            document.getElementById(tab+'Section').classList.remove('hidden');
-            if(tab==='users')loadUsers();if(tab==='gifts')loadGifts();if(tab==='recent')loadRecentShares();
+            ['users', 'gifts', 'recent'].forEach(t => {
+                document.getElementById(t + 'Section').classList.add('hidden');
+                document.getElementById(t + 'TabBtn').classList.remove('border-deepBlue', 'text-deepBlue');
+                document.getElementById(t + 'TabBtn').classList.add('border-transparent', 'text-gray-400');
+            });
+            document.getElementById(tab + 'Section').classList.remove('hidden');
+            document.getElementById(tab + 'TabBtn').classList.add('border-deepBlue', 'text-deepBlue');
+            document.getElementById(tab + 'TabBtn').classList.remove('border-transparent', 'text-gray-400');
+
+            if (tab === 'users') loadUsers();
+            if (tab === 'gifts') loadGifts();
+            if (tab === 'recent') loadRecentShares();
         }
+
         async function loadStats() {
-            try{
-                const res=await fetch(`${API_BASE}/admin/stats`,{headers:{'Authorization':`Bearer ${token}`}});
-                const data=await res.json();
-                if(data.success){document.getElementById('statUsers').textContent=data.data.totalUsers;document.getElementById('statGifts').textContent=data.data.totalGifts;document.getElementById('statShares').textContent=data.data.totalShares;}
-            }catch(err){console.error(err);}
-        }
-        async function loadUsers(page=1) {
-            currentPage=page;
-            const search=document.getElementById('userSearch').value;
-            try{
-                const res=await fetch(`${API_BASE}/admin/users?page=${page}&limit=10&search=${encodeURIComponent(search)}`,{headers:{'Authorization':`Bearer ${token}`}});
-                const data=await res.json();
-                if(data.success){
-                    const tbody=document.getElementById('usersTable');
-                    tbody.innerHTML=data.data.users.map(u=>`<tr class="border-b border-lightGray/30"><td class="py-4">${u.id}</td><td class="py-4">${u.email}</td><td class="py-4">${u.name||'-'}</td><td class="py-4">${u.share_count}</td><td class="py-4">${new Date(u.created_at).toLocaleDateString()}</td><td class="py-4"><button onclick="deleteUser(${u.id})" class="px-3 py-1 text-sm text-red-500 hover:bg-red-50 rounded">删除</button></td></tr>`).join('');
-                    const pag=document.getElementById('usersPagination');
-                    const total=data.data.pagination.totalPages;
-                    pag.innerHTML=total>1?Array.from({length:total},(_,i)=>`<button onclick="loadUsers(${i+1})" class="px-3 py-1 rounded ${i+1===page?'bg-deepBlue text-white':'bg-gray-100 text-gray-600'}">${i+1}</button>`).join(''):'';
+            try {
+                const res = await fetch(`${API_BASE}/admin/stats`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('statUsers').textContent = data.data.totalUsers;
+                    document.getElementById('statGifts').textContent = data.data.totalGifts;
+                    document.getElementById('statShares').textContent = data.data.totalShares;
                 }
-            }catch(err){console.error(err);}
+            } catch (err) { console.error(err); }
         }
+
+        async function loadUsers(page = 1) {
+            currentPage = page;
+            const search = document.getElementById('userSearch').value;
+            try {
+                const res = await fetch(`${API_BASE}/admin/users?page=${page}&limit=10&search=${encodeURIComponent(search)}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.success) {
+                    const tbody = document.getElementById('usersTable');
+                    tbody.innerHTML = data.data.users.map(u => `
+                        <tr class="border-b border-lightGray/30 hover:bg-warmBeige/10">
+                            <td class="py-4">${u.id}</td>
+                            <td class="py-4">${u.email}</td>
+                            <td class="py-4">${u.name || '-'}</td>
+                            <td class="py-4">${u.language}</td>
+                            <td class="py-4">${u.share_count}</td>
+                            <td class="py-4">${new Date(u.created_at).toLocaleDateString()}</td>
+                            <td class="py-4">
+                                <button onclick="editUser(${u.id})" class="px-3 py-1 text-sm text-deepBlue hover:bg-softBlue/20 rounded">${i18n[currentLang]['btn.edit']}</button>
+                                <button onclick="deleteUser(${u.id})" class="px-3 py-1 text-sm text-red-500 hover:bg-red-50 rounded">${i18n[currentLang]['btn.delete']}</button>
+                            </td>
+                        </tr>
+                    `).join('');
+
+                    // Pagination
+                    const pag = document.getElementById('usersPagination');
+                    const total = data.data.pagination.totalPages;
+                    pag.innerHTML = total > 1 ? Array.from({length: total}, (_, i) => `
+                        <button onclick="loadUsers(${i+1})" class="px-3 py-1 rounded ${i+1 === page ? 'bg-deepBlue text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">${i+1}</button>
+                    `).join('') : '';
+                }
+            } catch (err) { console.error(err); }
+        }
+
         async function loadGifts() {
-            try{
-                const res=await fetch(`${API_BASE}/admin/gifts`,{headers:{'Authorization':`Bearer ${token}`}});
-                const data=await res.json();
-                if(data.success){
-                    const tbody=document.getElementById('giftsTable');
-                    tbody.innerHTML=data.data.map(g=>`<tr class="border-b border-lightGray/30"><td class="py-4">${g.id}</td><td class="py-4">${g.gift_key}</td><td class="py-4">${g.title_zh}</td><td class="py-4">${g.title_en}</td><td class="py-4"><span class="px-2 py-1 rounded text-xs ${g.is_active?'bg-green-100 text-green-600':'bg-gray-100 text-gray-400'}">${g.is_active?'启用':'禁用'}</span></td><td class="py-4"><button onclick="editGift(${g.id})" class="px-3 py-1 text-sm text-deepBlue hover:bg-softBlue/20 rounded">编辑</button><button onclick="deleteGift(${g.id})" class="px-3 py-1 text-sm text-red-500 hover:bg-red-50 rounded">删除</button></td></tr>`).join('');
+            try {
+                const res = await fetch(`${API_BASE}/admin/gifts`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.success) {
+                    const tbody = document.getElementById('giftsTable');
+                    tbody.innerHTML = data.data.map(g => `
+                        <tr class="border-b border-lightGray/30 hover:bg-warmBeige/10">
+                            <td class="py-4">${g.id}</td>
+                            <td class="py-4">${g.gift_key}</td>
+                            <td class="py-4">${g.title_zh}</td>
+                            <td class="py-4">${g.title_en}</td>
+                            <td class="py-4">
+                                <span class="px-2 py-1 rounded text-xs ${g.is_active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}">
+                                    ${g.is_active ? i18n[currentLang]['status.active'] : i18n[currentLang]['status.inactive']}
+                                </span>
+                            </td>
+                            <td class="py-4">
+                                <button onclick="editGift(${g.id})" class="px-3 py-1 text-sm text-deepBlue hover:bg-softBlue/20 rounded">${i18n[currentLang]['btn.edit']}</button>
+                                <button onclick="toggleGift(${g.id}, ${g.is_active})" class="px-3 py-1 text-sm text-earthBrown hover:bg-earthBrown/10 rounded">${g.is_active ? i18n[currentLang]['btn.deactivate'] : i18n[currentLang]['btn.activate']}</button>
+                                <button onclick="deleteGift(${g.id})" class="px-3 py-1 text-sm text-red-500 hover:bg-red-50 rounded">${i18n[currentLang]['btn.delete']}</button>
+                            </td>
+                        </tr>
+                    `).join('');
                 }
-            }catch(err){console.error(err);}
+            } catch (err) { console.error(err); }
         }
+
         async function loadRecentShares() {
-            try{
-                const res=await fetch(`${API_BASE}/admin/stats`,{headers:{'Authorization':`Bearer ${token}`}});
-                const data=await res.json();
-                const container=document.getElementById('recentShares');
-                if(data.success&&data.data.recentShares.length>0)container.innerHTML=data.data.recentShares.map(s=>`<div class="bg-warmBeige/30 rounded-xl p-4"><p class="font-medium text-deepBlue">${s.title_zh}</p><p class="text-sm text-gray-500">${s.email} → ${s.to_name||'-'}</p></div>`).join('');
-                else container.innerHTML='<p class="text-center py-12 text-gray-400">暂无数据</p>';
-            }catch(err){console.error(err);}
-        }
-        function showGiftModal(id=null) {
-            document.getElementById('giftModal').classList.remove('hidden');
-            document.getElementById('giftId').value=id||'';
-            if(!id){document.getElementById('giftKey').value='';document.getElementById('giftTitleZh').value='';document.getElementById('giftTitleEn').value='';}
-        }
-        async function editGift(id) {
-            try{
-                const res=await fetch(`${API_BASE}/admin/gifts`,{headers:{'Authorization':`Bearer ${token}`}});
-                const data=await res.json();
-                if(data.success){
-                    const gift=data.data.find(g=>g.id===id);
-                    if(gift){showGiftModal(id);document.getElementById('giftKey').value=gift.gift_key;document.getElementById('giftTitleZh').value=gift.title_zh;document.getElementById('giftTitleEn').value=gift.title_en;document.getElementById('giftIcon').value=gift.icon;}
+            try {
+                const res = await fetch(`${API_BASE}/admin/stats`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.success) {
+                    const container = document.getElementById('recentShares');
+                    container.innerHTML = data.data.recentShares.length > 0 ? data.data.recentShares.map(s => `
+                        <div class="bg-warmBeige/30 rounded-xl p-4 flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-deepBlue">${s.title_zh}</p>
+                                <p class="text-sm text-gray-500">${s.email} → ${i18n[currentLang]['text.to']}: ${s.to_name || '-'}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-400">${i18n[currentLang]['text.method']}: ${s.share_method}</p>
+                                <p class="text-xs text-gray-400">${new Date(s.created_at).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    `).join('') : `<p class="text-center py-12 text-gray-400">${i18n[currentLang]['text.noData']}</p>`;
                 }
-            }catch(err){console.error(err);}
+            } catch (err) { console.error(err); }
         }
-        function closeGiftModal(){document.getElementById('giftModal').classList.add('hidden');}
+
+        function showGiftModal(id = null) {
+            document.getElementById('giftModal').classList.remove('hidden');
+            document.getElementById('giftModalTitle').textContent = id ? i18n[currentLang]['modal.editGift'] : i18n[currentLang]['modal.addGift'];
+            document.getElementById('giftId').value = id || '';
+            if (!id) {
+                document.getElementById('giftKey').value = '';
+                document.getElementById('giftTitleZh').value = '';
+                document.getElementById('giftTitleEn').value = '';
+                document.getElementById('giftIcon').value = 'heart';
+                document.getElementById('giftSortOrder').value = '0';
+            }
+        }
+
+        async function editGift(id) {
+            try {
+                const res = await fetch(`${API_BASE}/admin/gifts`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.success) {
+                    const gift = data.data.find(g => g.id === id);
+                    if (gift) {
+                        showGiftModal(id);
+                        document.getElementById('giftKey').value = gift.gift_key;
+                        document.getElementById('giftTitleZh').value = gift.title_zh;
+                        document.getElementById('giftTitleEn').value = gift.title_en;
+                        document.getElementById('giftIcon').value = gift.icon;
+                        document.getElementById('giftSortOrder').value = gift.sort_order;
+                    }
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        function closeGiftModal() { document.getElementById('giftModal').classList.add('hidden'); }
+
         async function saveGift(e) {
             e.preventDefault();
-            const id=document.getElementById('giftId').value;
-            const body={gift_key:document.getElementById('giftKey').value,title_zh:document.getElementById('giftTitleZh').value,title_en:document.getElementById('giftTitleEn').value,icon:document.getElementById('giftIcon').value};
-            try{
-                const url=id?`${API_BASE}/admin/gifts/${id}`:`${API_BASE}/admin/gifts`;
-                const method=id?'PUT':'POST';
-                const res=await fetch(url,{method,headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify(body)});
-                const data=await res.json();
-                if(data.success){closeGiftModal();loadGifts();}
-            }catch(err){console.error(err);}
+            const id = document.getElementById('giftId').value;
+            const body = {
+                gift_key: document.getElementById('giftKey').value,
+                title_zh: document.getElementById('giftTitleZh').value,
+                title_en: document.getElementById('giftTitleEn').value,
+                icon: document.getElementById('giftIcon').value,
+                sort_order: parseInt(document.getElementById('giftSortOrder').value)
+            };
+
+            try {
+                const url = id ? `${API_BASE}/admin/gifts/${id}` : `${API_BASE}/admin/gifts`;
+                const method = id ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeGiftModal();
+                    loadGifts();
+                }
+            } catch (err) { console.error(err); }
         }
-        async function deleteUser(id) {
-            if(!confirm('确定要删除吗？'))return;
-            try{
-                await fetch(`${API_BASE}/admin/users/${id}`,{method:'DELETE',headers:{'Authorization':`Bearer ${token}`}});
-                loadUsers();
-            }catch(err){console.error(err);}
-        }
-        async function deleteGift(id) {
-            if(!confirm('确定要删除吗？'))return;
-            try{
-                await fetch(`${API_BASE}/admin/gifts/${id}`,{method:'DELETE',headers:{'Authorization':`Bearer ${token}`}});
+
+        async function toggleGift(id, currentStatus) {
+            try {
+                await fetch(`${API_BASE}/admin/gifts/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ is_active: !currentStatus })
+                });
                 loadGifts();
-            }catch(err){console.error(err);}
+            } catch (err) { console.error(err); }
         }
-        function logout(){localStorage.removeItem('jesusgift-token');localStorage.removeItem('jesusgift-user');window.location.href='index.html';}
-        document.addEventListener('DOMContentLoaded',()=>{if(!token)window.location.href='login.html';else{loadStats();loadUsers();}});
+
+        async function deleteGift(id) {
+            if (!confirm(i18n[currentLang]['msg.confirmDelete'])) return;
+            try {
+                await fetch(`${API_BASE}/admin/gifts/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadGifts();
+            } catch (err) { console.error(err); }
+        }
+
+        async function editUser(id) {
+            try {
+                const res = await fetch(`${API_BASE}/admin/users/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('userModal').classList.remove('hidden');
+                    document.getElementById('editUserId').value = id;
+                    document.getElementById('editUserName').value = data.data.name || '';
+                    document.getElementById('editUserEmail').value = data.data.email;
+                    document.getElementById('editUserLanguage').value = data.data.language;
+                    document.getElementById('editUserPassword').value = '';
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        function closeUserModal() { document.getElementById('userModal').classList.add('hidden'); }
+
+        async function saveUser(e) {
+            e.preventDefault();
+            const id = document.getElementById('editUserId').value;
+            const body = {
+                name: document.getElementById('editUserName').value,
+                email: document.getElementById('editUserEmail').value,
+                language: document.getElementById('editUserLanguage').value
+            };
+            const pwd = document.getElementById('editUserPassword').value;
+            if (pwd) body.password = pwd;
+
+            try {
+                await fetch(`${API_BASE}/admin/users/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(body)
+                });
+                closeUserModal();
+                loadUsers(currentPage);
+            } catch (err) { console.error(err); }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm(i18n[currentLang]['msg.confirmDelete'])) return;
+            try {
+                await fetch(`${API_BASE}/admin/users/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadUsers(currentPage);
+            } catch (err) { console.error(err); }
+        }
+
+        function logout() {
+            localStorage.removeItem('jesusgift-token');
+            localStorage.removeItem('jesusgift-user');
+            window.location.href = 'login.html';
+        }
+
+        function checkAdmin() {
+            const user = JSON.parse(localStorage.getItem('jesusgift-user') || '{}');
+            if (!token || !user.is_admin) {
+                window.location.href = user.id ? 'profile.html' : 'login.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLang(currentLang);
+            checkAdmin();
+            loadStats();
+            loadUsers();
+        });
     </script>
 </body>
 </html>
